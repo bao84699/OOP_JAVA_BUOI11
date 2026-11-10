@@ -1,0 +1,1837 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bài giảng Kế thừa Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<script>(function(){try{var t=localStorage.getItem('ktt.theme');if(!t)t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+/* ===== Giao diện: dashboard pastel tím, phong cách clay mềm ===== */
+:root{
+  --bg:#ebe5f8; --panel:#faf8ff; --surface:#ffffff; --surface2:#f3effc; --fg:#2a2350; --muted:#7b7499; --line:#e7e1f6;
+  --accent:#7c5ce6; --accent2:#a68cf2; --accent-ink:#ffffff; --accent-soft:#ece6fd; --accent-dk:#5b3fc4;
+  --side1:#ab95f4; --side2:#8467e3; --hero1:#d8cafb; --hero2:#efe9fe;
+  --pink:#fde6ec; --pink-i:#e65b80; --yellow:#fdf1d8; --yellow-i:#e0a12a; --blue:#e3ebfd; --blue-i:#5683ec; --green:#e0f4e8; --green-i:#2f9e62; --purple:#ece6fd; --purple-i:#7c5ce6;
+  --hl:#fff3c4; --ok:#238f57; --ok-soft:#ddf3e6; --bad:#d6435a; --bad-soft:#fde3e7; --warn:#b07306; --warn-soft:#fdf0d3;
+  --code-bg:#f8f6fe; --code-fg:#2a2350;
+  --k:#b4237a; --t:#0b6b9a; --s:#1b7a3e; --c:#8a85a3; --a:#9a5a00; --n:#b45309;
+  --sh:0 16px 36px -20px rgba(86,58,180,.38),0 2px 6px rgba(86,58,180,.06);
+  --sh-sm:0 8px 18px -12px rgba(86,58,180,.4),0 1px 3px rgba(86,58,180,.06);
+  --clay:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(60,30,140,.06);
+  --display:'Nunito',system-ui,sans-serif;
+  --body:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#130f24; --panel:#1a1530; --surface:#221c3c; --surface2:#2a2349; --fg:#ece8ff; --muted:#a39dc4; --line:#352d5a;
+  --accent:#a68cf2; --accent2:#8467e3; --accent-ink:#1a1333; --accent-soft:#31285c; --accent-dk:#c9bbff;
+  --side1:#3f3280; --side2:#291f58; --hero1:#3a2e74; --hero2:#251e48;
+  --pink:#3d2236; --pink-i:#ff92ad; --yellow:#3b311b; --yellow-i:#f5c45e; --blue:#1f2a51; --blue-i:#8fb0ff; --green:#1a3628; --green-i:#6fd69b; --purple:#2e2558; --purple-i:#bba8ff;
+  --hl:#4a3f1a; --ok:#6fd69b; --ok-soft:#1a3628; --bad:#ff7f8c; --bad-soft:#45202a; --warn:#f5c45e; --warn-soft:#3b311b;
+  --code-bg:#140f26; --code-fg:#e3defa;
+  --k:#f08bd0; --t:#6cc4f0; --s:#7fd99a; --c:#7d7699; --a:#f0b34a; --n:#f0a96a;
+  --sh:0 16px 36px -20px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.2);
+  --sh-sm:0 8px 18px -12px rgba(0,0,0,.7);
+  --clay:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -3px 0 rgba(0,0,0,.2);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:20px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%;
+  background-image:radial-gradient(900px 500px at 0% 0%,rgba(171,149,244,.25),transparent 60%),radial-gradient(800px 600px at 100% 100%,rgba(253,200,220,.25),transparent 60%);background-attachment:fixed}
+img{max-width:100%}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);color:var(--accent-dk);padding:.08em .4em;border-radius:6px}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.2;margin:0}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.fill{fill:currentColor;stroke:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ===== khung ===== */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);gap:22px;padding:22px;max-width:1480px;margin:0 auto;min-height:100vh}
+.side{position:sticky;top:22px;height:calc(100vh - 44px);background:linear-gradient(180deg,var(--side1),var(--side2));border-radius:30px;padding:22px 14px 16px;display:flex;flex-direction:column;gap:14px;color:#fff;box-shadow:var(--sh),inset 0 2px 0 rgba(255,255,255,.3),inset 0 -4px 0 rgba(40,20,110,.15);overflow-y:auto;scrollbar-width:none;z-index:35}
+.side::-webkit-scrollbar{display:none}
+.prof{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:0 6px}
+.avatar{width:82px;height:82px;border-radius:50%;background:linear-gradient(160deg,#fff,#efe9ff);border:4px solid rgba(255,255,255,.65);display:grid;place-items:center;font-weight:900;font-size:30px;color:#6a4bd6;box-shadow:0 10px 20px -10px rgba(30,10,90,.6),inset 0 -4px 0 rgba(124,92,230,.12);letter-spacing:-.02em}
+.prof .hi{font-weight:900;font-size:19px;line-height:1.25;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prof .id{font-size:12.5px;opacity:.85;font-weight:700}
+.sprog{background:rgba(255,255,255,.16);border-radius:16px;padding:10px 12px;font-size:12.5px;font-weight:800}
+.sprog .r{display:flex;justify-content:space-between}
+.sprog .bw{height:8px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden;margin-top:6px}
+.sprog .bw i{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .4s}
+.nav{display:flex;flex-direction:column;gap:3px}
+.nv{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:16px;color:#fff;background:transparent;border:0;cursor:pointer;font-weight:800;font-size:14.5px;text-align:left;width:100%;transition:background .15s}
+.nv:hover{background:rgba(255,255,255,.14)}
+.nv .nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv .pr{font-size:11px;font-weight:800;background:rgba(255,255,255,.2);padding:1px 8px;border-radius:999px;font-variant-numeric:tabular-nums}
+.nv .pr:empty{display:none}
+.nv.done .pr{background:#7be0a8;color:#0e4a2b}
+.nv[aria-current="page"]{background:#fff;color:#5b3fc4;box-shadow:0 8px 16px -8px rgba(30,10,90,.55),inset 0 -3px 0 rgba(124,92,230,.14)}
+.nv[aria-current="page"] .pr{background:var(--accent-soft);color:#5b3fc4}
+:root[data-theme="dark"] .nv[aria-current="page"] .pr{background:#ece6fd}
+.nv[aria-current="page"].done .pr{background:#ddf3e6;color:#1b6b42}
+.promo{margin-top:auto;background:linear-gradient(180deg,#ffe3ea,#ffc9d6);border-radius:22px;padding:12px 14px 14px;color:#6b2a45;text-align:center;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -4px 0 rgba(160,40,80,.1),0 10px 20px -12px rgba(60,10,40,.5)}
+.promo .art{width:86px;height:86px;margin:-4px auto 2px;font-size:48px}
+.promo b{display:block;font-size:16px;font-weight:900}
+.promo p{margin:2px 0 10px;font-size:12.5px;line-height:1.4;font-weight:600;opacity:.85}
+.promo .btn{background:linear-gradient(180deg,#f27499,#e2557d);color:#fff;box-shadow:0 8px 16px -8px #c43a62,inset 0 -3px 0 rgba(0,0,0,.12),inset 0 2px 0 rgba(255,255,255,.3)}
+.art{position:relative;display:grid;place-items:center;overflow:hidden}
+.art img{width:100%;height:100%;object-fit:cover;display:block}
+.art.noimg img{display:none}
+.art.noimg::after{content:attr(data-emoji);font-size:inherit;line-height:1}
+
+.main{min-width:0;background:var(--panel);border-radius:32px;padding:24px 30px 44px;box-shadow:var(--sh);border:1px solid rgba(255,255,255,.55)}
+:root[data-theme="dark"] .main{border-color:rgba(255,255,255,.04)}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.top .ttl{flex:1;min-width:180px}
+.top h1{font-size:28px;font-weight:900;letter-spacing:-.02em}
+.top .sub{font-size:13.5px;color:var(--muted);font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;color:var(--muted);box-shadow:var(--sh-sm);white-space:nowrap}
+.pill b{color:var(--fg);font-variant-numeric:tabular-nums}
+.pill .ic{width:18px;height:18px}
+.pill.xp .ic{color:var(--yellow-i)}
+.pill.tm .ic{color:var(--blue-i)}
+button.pill{cursor:pointer}
+.sync .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.sync.ok .dot{background:#3cc47c;box-shadow:0 0 0 3px rgba(60,196,124,.2)}
+.sync.wait .dot{background:var(--yellow-i);box-shadow:0 0 0 3px rgba(224,161,42,.2)}
+.sync.err .dot{background:var(--bad);box-shadow:0 0 0 3px rgba(214,67,90,.2)}
+.round{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh-sm);display:grid;place-items:center;cursor:pointer;color:var(--accent);flex:none;padding:0}
+.round:hover{color:var(--accent-dk)}
+.uavatar{background:linear-gradient(160deg,var(--accent2),var(--accent));color:#fff;font-weight:900;font-size:15px;border:3px solid var(--surface)}
+#menuBtn{display:none}
+.hdwrap{position:relative}
+#umenu{position:absolute;right:0;top:54px;width:min(340px,calc(100vw - 24px));background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 24px 50px -20px rgba(40,20,110,.45);z-index:45;display:flex;flex-direction:column;gap:10px}
+#umenu p{margin:0}
+.mhd{display:flex;gap:12px;align-items:center}
+.mhd .round{width:48px;height:48px}
+.mbox{background:var(--surface2);border-radius:16px;padding:10px 12px;font-size:13.5px}
+.mbox h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-weight:800}
+.mbox input{width:100%;font:inherit;font-size:13px;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:7px 10px;margin:6px 0}
+.scrim{position:fixed;inset:0;background:rgba(30,15,70,.35);backdrop-filter:blur(2px);z-index:34}
+
+/* ===== tổng quan ===== */
+.hero{position:relative;border-radius:28px;background:linear-gradient(115deg,var(--hero1) 0%,var(--hero2) 70%);min-height:230px;overflow:hidden;box-shadow:var(--sh),var(--clay);display:flex;align-items:center}
+.hero-tx{position:relative;z-index:2;padding:28px 32px;max-width:56%}
+.hero h2{font-size:clamp(24px,3vw,32px);font-weight:900;letter-spacing:-.02em;margin:6px 0 6px}
+.hero p{margin:0 0 16px;color:var(--muted);font-weight:700;font-size:15.5px}
+.hero .art{position:absolute;right:0;top:0;bottom:0;width:58%;font-size:110px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
+.hero .art img{object-position:right center}
+.eyebrow{font-size:12px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:18px}
+.stat{border-radius:22px;padding:16px 16px 14px;background:var(--cbg);box-shadow:var(--sh-sm),var(--clay);min-width:0}
+.stat .ti{width:44px;height:44px;border-radius:14px;background:var(--ci);color:#fff;display:grid;place-items:center;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15),inset 0 2px 0 rgba(255,255,255,.3),0 8px 14px -8px var(--ci)}
+:root[data-theme="dark"] .stat .ti{color:#1a1333}
+.stat .lb{font-weight:800;color:var(--muted);font-size:13.5px;margin-top:10px}
+.stat .vl{font-size:30px;font-weight:900;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+.stat .vl small{font-size:15px;color:var(--muted);font-weight:800}
+.stat .sb{font-size:12.5px;color:var(--ci);font-weight:800}
+.c-purple{--cbg:var(--purple);--ci:var(--purple-i)}.c-pink{--cbg:var(--pink);--ci:var(--pink-i)}.c-yellow{--cbg:var(--yellow);--ci:var(--yellow-i)}.c-blue{--cbg:var(--blue);--ci:var(--blue-i)}.c-green{--cbg:var(--green);--ci:var(--green-i)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;margin-top:16px}
+.card{background:var(--surface);border-radius:24px;padding:18px 20px;box-shadow:var(--sh-sm),var(--clay);border:1px solid var(--line);min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.card-h h3{font-size:16.5px;font-weight:900}
+.tagp{font-size:12px;font-weight:800;border:1px solid var(--line);border-radius:999px;padding:3px 11px;color:var(--muted);background:var(--surface);cursor:pointer}
+.tagp:hover{border-color:var(--accent);color:var(--accent)}
+.bars{display:flex;align-items:flex-end;gap:10px;padding-top:4px}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;background:none;border:0;cursor:pointer;padding:0}
+.bcol .bt{width:100%;max-width:38px;height:150px;background:var(--surface2);border-radius:13px;display:flex;align-items:flex-end;overflow:hidden}
+.bcol .bt i{display:block;width:100%;border-radius:13px;background:var(--col);min-height:8px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.1),inset 0 3px 0 rgba(255,255,255,.45);transition:height .5s}
+.bcol .bl{font-size:12px;font-weight:800;color:var(--muted)}
+.bcol .bv{font-size:11px;font-weight:800;color:var(--fg);font-variant-numeric:tabular-nums}
+.bcol:hover .bl,.bcol.cur .bl{color:var(--accent)}
+.donut-w{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut{width:150px;height:150px;border-radius:50%;position:relative;flex:none;box-shadow:var(--sh-sm)}
+.donut::after{content:"";position:absolute;inset:30px;border-radius:50%;background:var(--surface);box-shadow:inset 0 3px 8px rgba(60,30,140,.1)}
+.donut .ct{position:absolute;inset:0;display:grid;place-items:center;z-index:1;text-align:center;line-height:1.1}
+.donut .ct b{display:block;font-size:24px;font-weight:900}
+.donut .ct span{font-size:11.5px;color:var(--muted);font-weight:800}
+.lgd{display:flex;flex-direction:column;gap:9px;flex:1;min-width:150px}
+.lgd div{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700}
+.lgd i{width:11px;height:11px;border-radius:50%;flex:none}
+.lgd span{flex:1}
+.lgd b{font-variant-numeric:tabular-nums}
+.acts{display:flex;flex-direction:column}
+.act{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);background:none;border-left:0;border-right:0;border-top:0;text-align:left;cursor:pointer;width:100%}
+.act:last-child{border-bottom:0}
+.act .ti{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;background:var(--cbg);color:var(--ci);box-shadow:var(--clay)}
+.act .mt{flex:1;min-width:0}
+.act .mt b{display:block;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act .mt span{font-size:12.5px;color:var(--muted);font-weight:700}
+.act .tm{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+.empty{color:var(--muted);font-weight:700;font-size:14px;padding:18px 0;text-align:center}
+.next{position:relative;border-radius:22px;padding:20px;min-height:220px;background:linear-gradient(150deg,#8a6de6,#b49af5 60%,#f2b8cf);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;box-shadow:var(--sh-sm),inset 0 2px 0 rgba(255,255,255,.3)}
+.next .big{position:absolute;right:-10px;top:-10px;width:150px;height:150px;opacity:.22}
+.next .big .ic{width:150px;height:150px;stroke-width:1.5}
+.next small{font-weight:800;opacity:.9;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
+.next h4{font-size:22px;font-weight:900;margin:2px 0 4px}
+.next p{margin:0;font-weight:700;opacity:.92;font-size:13.5px}
+.next .play{position:absolute;right:18px;bottom:18px;width:52px;height:52px;border-radius:50%;border:0;background:#fff;color:#7c5ce6;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 20px -8px rgba(30,10,90,.6)}
+.next .nb{height:7px;background:rgba(255,255,255,.3);border-radius:99px;overflow:hidden;margin-top:10px;max-width:70%}
+.next .nb i{display:block;height:100%;background:#fff;border-radius:99px}
+.banner{margin-top:16px;border-radius:24px;padding:16px 20px;background:linear-gradient(100deg,var(--side1),var(--side2));color:#fff;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--sh),inset 0 2px 0 rgba(255,255,255,.25)}
+.banner .ti{width:54px;height:54px;border-radius:18px;background:#fff;color:#0f9d58;display:grid;place-items:center;flex:none;box-shadow:0 8px 16px -8px rgba(20,10,60,.6),inset 0 -3px 0 rgba(0,0,0,.06)}
+.banner .ti .ic{width:28px;height:28px}
+.banner .mt{flex:1;min-width:200px}
+.banner b{font-size:17px;font-weight:900;display:block}
+.banner span{font-size:13.5px;font-weight:700;opacity:.92}
+.banner .btn{background:#fff;color:#5b3fc4;box-shadow:0 8px 16px -8px rgba(20,10,60,.6)}
+.banner .btn.ghost{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.4)}
+
+/* ===== chặng ===== */
+.sbanner{border-radius:28px;padding:24px 28px;background:linear-gradient(115deg,var(--hero1),var(--hero2) 75%);display:flex;gap:22px;align-items:center;box-shadow:var(--sh),var(--clay);position:relative;overflow:hidden}
+.sbanner .sbt{flex:1;min-width:0;position:relative;z-index:1}
+.sbanner .bg{position:absolute;right:120px;bottom:-40px;opacity:.12;color:var(--accent)}
+.sbanner .bg .ic{width:190px;height:190px;stroke-width:1.4}
+.stg-h{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.02em;margin:6px 0 6px}
+.goal{color:var(--muted);font-size:16.5px;font-weight:700;max-width:62ch;margin:0}
+.ring{width:104px;height:104px;border-radius:50%;flex:none;display:grid;place-items:center;position:relative;z-index:1;box-shadow:var(--sh-sm)}
+.ring::after{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--surface)}
+.ring span{position:relative;z-index:1;text-align:center;line-height:1.1;font-weight:900;font-size:20px}
+.ring span small{display:block;font-size:11px;color:var(--muted);font-weight:800}
+.ring.ico{background:var(--surface);color:var(--accent)}
+.ring.ico::after{display:none}
+.ring.ico .ic{width:44px;height:44px;position:relative;z-index:1}
+.sec{display:flex;flex-direction:column;gap:18px;margin-top:22px;max-width:980px}
+.txt{max-width:72ch}
+.txt p{margin:0 0 12px}
+.txt h2{font-size:22px;font-weight:900;margin:12px 0 8px;display:flex;align-items:center;gap:10px}
+.txt h2::before{content:"";width:8px;height:22px;border-radius:99px;background:linear-gradient(180deg,var(--accent2),var(--accent))}
+.txt ul,.txt ol{margin:0 0 12px;padding-left:22px}
+.txt li{margin-bottom:5px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--sh-sm)}
+.tbl table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:480px}
+.tbl th{background:var(--accent-soft);text-align:left;font-weight:900;color:var(--accent-dk)}
+.tbl th,.tbl td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.note{border-left:5px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 16px 16px 0;max-width:72ch;font-weight:600}
+.note p{margin:0}
+.cap{font-size:13px;color:var(--muted);margin:6px 0 0;font-weight:600}
+.treebox{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--sh-sm)}
+svg.tree{width:100%;max-width:640px;height:auto;display:block;margin:0 auto}
+svg.tree .nd{fill:var(--surface2);stroke:var(--line);stroke-width:1.5}
+svg.tree .nd.hot{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+svg.tree text{fill:var(--fg);font-family:var(--mono);font-size:13px;text-anchor:middle;dominant-baseline:middle}
+svg.tree .ln{stroke:var(--muted);stroke-width:1.5;fill:none}
+svg.tree .ar{fill:var(--surface);stroke:var(--muted);stroke-width:1.5}
+
+/* code */
+.code{background:var(--code-bg);color:var(--code-fg);border:1px solid var(--line);border-radius:16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.65;padding:10px 0;box-shadow:inset 0 2px 6px rgba(60,30,140,.05)}
+.code-in{width:max-content;min-width:100%}
+.cl{display:flex;white-space:pre;padding:0 14px;min-width:100%}
+button.cl{width:100%;border:0;background:none;text-align:left;cursor:pointer;font:inherit;color:inherit}
+button.cl:hover{background:var(--surface2)}
+.cl .no{width:2.4em;flex:none;text-align:right;margin-right:14px;color:var(--c);user-select:none}
+.cl.mk{background:var(--warn-soft)}
+.cl.cur{background:var(--hl);box-shadow:inset 4px 0 0 var(--warn)}
+.cl.err{background:var(--bad-soft);box-shadow:inset 4px 0 0 var(--bad)}
+.cl.sel{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}
+.cl.hit{background:var(--ok-soft);box-shadow:inset 4px 0 0 var(--ok)}
+.cl.fp{background:var(--bad-soft);box-shadow:inset 4px 0 0 var(--bad)}
+.cl.miss{background:var(--warn-soft);box-shadow:inset 4px 0 0 var(--warn)}
+.k{color:var(--k);font-weight:500}.t{color:var(--t)}.s{color:var(--s)}.c{color:var(--c);font-style:italic}.a{color:var(--a)}.n{color:var(--n)}
+
+/* thẻ bài tập */
+.ex{border:1px solid var(--line);background:var(--surface);border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0;box-shadow:var(--sh-sm),var(--clay)}
+.exh{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-dk);background:var(--accent-soft);border-radius:999px;padding:4px 12px}
+.st{font-size:12.5px;color:var(--muted);font-weight:800;border-radius:999px;padding:3px 11px;background:var(--surface2)}
+.st.ok{color:var(--ok);background:var(--ok-soft)}.st.rv{color:var(--warn);background:var(--warn-soft)}
+.q{font-weight:700;max-width:72ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:linear-gradient(180deg,var(--accent2),var(--accent));color:#fff;border-radius:999px;padding:10px 20px;font-weight:800;cursor:pointer;font-size:15px;box-shadow:0 10px 18px -10px var(--accent),inset 0 -3px 0 rgba(0,0,0,.12),inset 0 2px 0 rgba(255,255,255,.3);transition:transform .12s,filter .12s;text-decoration:none}
+:root[data-theme="dark"] .btn{color:#1a1333}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none;transform:none}
+.btn .ic{width:18px;height:18px}
+.btn.ghost{background:var(--surface);color:var(--fg);border:1px solid var(--line);box-shadow:var(--sh-sm)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn.sm{padding:6px 14px;font-size:13.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.conf{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:700}
+.cf{border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:3px 12px;cursor:pointer;font-size:13px;font-weight:700}
+.cf[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-dk);font-weight:900}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--surface2);border-radius:16px;padding:10px 14px;cursor:pointer;min-width:0;font-weight:600;transition:border-color .12s,transform .12s}
+.opt:hover:not(:disabled){border-color:var(--accent);transform:translateX(2px)}
+.opt .lt{flex:none;font-family:var(--mono);font-weight:700;font-size:13px;width:26px;height:26px;border-radius:9px;background:var(--surface);color:var(--accent);display:grid;place-items:center;box-shadow:var(--sh-sm)}
+.opt .tx{min-width:0;overflow-wrap:anywhere;padding-top:1px}
+.opt pre{margin:0;font-family:var(--mono);font-size:13px;white-space:pre-wrap}
+.opt.good{border-color:var(--ok);background:var(--ok-soft)}
+.opt.good .lt{background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft);opacity:.85}
+.opt.bad .lt{background:var(--bad);color:#fff}
+.opt:disabled{cursor:default}
+.fb{font-size:15px;max-width:72ch;border-radius:14px;padding:10px 14px;font-weight:600}
+.fb.ok{color:var(--ok);background:var(--ok-soft)}.fb.bad{color:var(--bad);background:var(--bad-soft)}.fb .ex-t{color:var(--fg)}
+.fb:empty{display:none}
+.hint{background:var(--warn-soft);border-radius:14px;padding:9px 14px;font-size:14.5px;max-width:72ch;font-weight:600}
+.hint::before{content:"💡 "}
+.hints{display:flex;flex-direction:column;gap:6px}
+.hints:empty{display:none}
+.tri{display:flex;flex-direction:column;gap:10px;border-top:2px dashed var(--line);padding-top:14px}
+.tri:first-of-type{border-top:0;padding-top:0}
+.ch{border:1.5px solid var(--line);background:var(--surface2);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:14px;font-weight:800}
+.ch:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.ch.good{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.ch.bad{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.ch:disabled{cursor:default}
+input.bl{font-family:var(--mono);font-size:13px;background:var(--surface);color:var(--fg);border:1.5px solid var(--accent);border-radius:7px;padding:1px 6px;margin:0 2px;width:9ch;min-width:0}
+input.bl.ok{border-color:var(--ok);background:var(--ok-soft)}
+input.bl.bad{border-color:var(--bad);background:var(--bad-soft)}
+.pl{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:var(--code-bg);border-radius:14px;padding:6px 8px 6px 14px;font-family:var(--mono);font-size:13px;white-space:pre;overflow-x:auto}
+.pl .tx{flex:1;min-width:0}
+.pl.good{border-color:var(--ok);background:var(--ok-soft)}
+.pl.bad{border-color:var(--bad);background:var(--bad-soft)}
+.pls{display:flex;flex-direction:column;gap:6px}
+.mv{display:flex;gap:4px;flex:none}
+.mv button{border:1px solid var(--line);background:var(--surface);border-radius:9px;width:32px;height:30px;cursor:pointer;font-size:14px;line-height:1;color:var(--accent);font-weight:900}
+.mv button:disabled{opacity:.35;cursor:default}
+.bugl{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.bugl li{border-left:4px solid var(--ok);background:var(--ok-soft);border-radius:0 14px 14px 0;padding:8px 12px;font-size:14.5px}
+.bugl li.m{border-color:var(--warn);background:var(--warn-soft)}
+
+/* chạy từng bước */
+.tr{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:12px;align-items:start}
+.pn{border:1px solid var(--line);border-radius:16px;background:var(--surface2);padding:9px 12px;margin-bottom:10px}
+.pn:last-child{margin-bottom:0}
+.pn h4{margin:0 0 6px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.stk{display:flex;flex-direction:column;gap:4px}
+.fr{font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:3px 8px;background:var(--surface);overflow-wrap:anywhere}
+.fr.top{border-color:var(--warn);background:var(--hl)}
+.lys{display:flex;flex-direction:column;gap:5px}
+.ly{border:1.5px dashed var(--line);border-radius:10px;padding:4px 8px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.ly b{color:var(--fg);font-weight:700}
+.ly.run{border:1.5px solid var(--warn);background:var(--hl);color:var(--fg)}
+.ly.done{border:1.5px solid var(--ok);background:var(--ok-soft);color:var(--fg)}
+.ly.fail{border:1.5px solid var(--bad);background:var(--bad-soft);color:var(--fg)}
+.ly .fd{display:block;margin-top:2px;font-size:12px}
+.ly .pv{font-family:var(--body);font-size:10.5px;border:1px solid var(--line);border-radius:5px;padding:0 4px;margin-left:5px;color:var(--muted)}
+.vt{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
+.vt th{font-family:var(--body);font-size:11px;color:var(--muted);text-align:left;font-weight:800;padding:0 6px 3px 0}
+.vt td{padding:2px 6px 2px 0;overflow-wrap:anywhere}
+.con{font-family:var(--mono);font-size:12.5px;background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:6px 8px;min-height:2.6em;white-space:pre-wrap;overflow-wrap:anywhere}
+.con .e{color:var(--bad)}
+.con i{color:var(--c)}
+.stepnote{background:var(--accent-soft);border-radius:16px;padding:10px 14px;font-size:14.5px;min-height:3.4em;font-weight:600}
+.cnt{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-left:auto;font-weight:800}
+
+/* phòng thí nghiệm ép kiểu */
+.lab{display:grid;gap:12px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.sg{border:1.5px solid var(--line);background:var(--surface2);border-radius:12px;padding:6px 12px;cursor:pointer;font-family:var(--mono);font-size:13px}
+.sg[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700;color:var(--accent-dk)}
+.lab h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.res{border-radius:14px;padding:10px 14px;font-size:15px}
+.res.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.res.cerr{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.res.rerr{background:var(--warn-soft);border-left:4px solid var(--warn)}
+.res strong{display:block;margin-bottom:2px}
+
+/* tổng kết */
+.tp{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr) auto;gap:12px;align-items:center;font-size:14.5px;font-weight:700;padding:5px 0}
+.tp .bw{height:12px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.tp .bw i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:999px}
+.tp span.v{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.bdg{border-radius:20px;padding:14px;text-align:center;background:var(--yellow);box-shadow:var(--sh-sm),var(--clay);font-weight:900;font-size:14px}
+.bdg .em{font-size:34px;display:block;line-height:1.2}
+.bdg small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.bdg.off{background:var(--surface2);color:var(--muted);filter:grayscale(1);opacity:.7}
+.errs{margin:0;padding-left:20px}
+.errs li{margin-bottom:6px}
+textarea.rp{width:100%;min-height:150px;font-family:var(--mono);font-size:12.5px;background:var(--code-bg);color:var(--code-fg);border:1px solid var(--line);border-radius:14px;padding:10px}
+
+/* điều hướng, đăng nhập, thông báo */
+.pnav{display:flex;justify-content:space-between;gap:10px;margin-top:34px;flex-wrap:wrap;max-width:980px}
+#login{position:fixed;inset:0;z-index:60;background:var(--bg);display:grid;place-items:center;padding:16px;overflow-y:auto;
+  background-image:radial-gradient(900px 500px at 0% 0%,rgba(171,149,244,.35),transparent 60%),radial-gradient(800px 600px at 100% 100%,rgba(253,200,220,.35),transparent 60%)}
+.lgbox{width:100%;max-width:940px;display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border-radius:34px;overflow:hidden;box-shadow:var(--sh),0 40px 80px -40px rgba(86,58,180,.5)}
+.lgart{background:linear-gradient(160deg,var(--side1),var(--side2));position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:520px;color:#fff}
+.lgart .art{position:absolute;inset:0;font-size:150px}
+.lgart .art img{object-position:center 30%}
+.lgart-tx{position:relative;z-index:1;margin:18px;padding:14px 16px;border-radius:20px;background:rgba(50,25,120,.38);backdrop-filter:blur(8px)}
+.lgart-tx b{display:block;font-size:18px;font-weight:900}
+.lgart-tx span{font-size:13.5px;font-weight:700;opacity:.92}
+.lg{display:flex;flex-direction:column;gap:13px;padding:36px 38px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px}
+.logo .lt{width:40px;height:40px;border-radius:13px;background:linear-gradient(160deg,var(--accent2),var(--accent));display:grid;place-items:center;color:#fff;box-shadow:0 8px 16px -8px var(--accent),inset 0 -3px 0 rgba(0,0,0,.15)}
+.logo b{color:var(--accent)}
+.lg h1{font-size:clamp(28px,4vw,36px);font-weight:900;letter-spacing:-.02em}
+.lg p{margin:0;color:var(--muted);font-weight:600}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:800}
+.fld span{color:var(--muted);font-weight:600}
+.fld input{font:inherit;font-weight:600;font-size:16px;background:var(--surface);color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;width:100%;box-shadow:inset 0 2px 4px rgba(60,30,140,.05)}
+.fld input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 4px var(--accent-soft)}
+.err{color:var(--bad);font-size:14px;min-height:1.3em;font-weight:700}
+.lgbtn{padding:13px 20px;font-size:16px}
+.okline{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700;color:var(--ok);background:var(--ok-soft);border-radius:12px;padding:8px 12px}
+.okline:empty{display:none}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:70;background:linear-gradient(180deg,#8f74ea,#6f50dc);color:#fff;border-radius:999px;padding:10px 20px;font-size:14.5px;font-weight:800;max-width:calc(100vw - 32px);box-shadow:0 14px 30px -10px rgba(80,50,180,.6)}
+
+@media (max-width:1100px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:980px){
+  .shell{grid-template-columns:minmax(0,1fr);padding:12px;gap:12px}
+  .side{position:fixed;left:12px;top:12px;bottom:12px;height:auto;width:270px;transform:translateX(calc(-100% - 24px));transition:transform .25s}
+  body.nav-open .side{transform:none}
+  #menuBtn{display:grid}
+  .main{padding:18px 16px 36px;border-radius:26px}
+  .dgrid{grid-template-columns:minmax(0,1fr)}
+  .tr{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  .lgbox{grid-template-columns:1fr}
+  .lgart{min-height:230px}
+  .lg{padding:24px 22px}
+  .hero-tx{max-width:100%;padding:22px}
+  .hero .art{opacity:.28}
+  .top .pill.tm,.top .pill.xp{display:none}
+  .sbanner{padding:20px;flex-direction:column;align-items:flex-start}
+  .ring{width:84px;height:84px}
+}
+@media (max-width:560px){.tp{grid-template-columns:1fr auto}.tp .bw{grid-column:1/-1;order:3}.stat .vl{font-size:25px}.top h1{font-size:23px}.sync .tx{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="shell" id="app" hidden>
+  <aside class="side" id="side" aria-label="Thanh điều hướng">
+    <div class="prof">
+      <div class="avatar" id="pfAv" aria-hidden="true">?</div>
+      <div class="hi" id="pfHi">Xin chào!</div>
+      <div class="id" id="pfId"></div>
+    </div>
+    <div class="sprog" aria-label="Tiến độ tổng">
+      <div class="r"><span>Tiến độ khóa học</span><span id="pct">0%</span></div>
+      <div class="bw"><i id="bar"></i></div>
+    </div>
+    <nav class="nav" id="nav" aria-label="Các chặng"></nav>
+    <div class="promo" id="promo">
+      <div class="art" data-emoji="🏆"><img src="assets/trophy.jpg" alt="" onerror="this.parentNode.classList.add('noimg')"></div>
+      <b id="prT">Boss cuối</b>
+      <p id="prP">Tìm 6 lỗi ẩn trong hệ thống tính lương!</p>
+      <button class="btn sm" type="button" id="prB">Thử thách</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <div class="main">
+    <header class="top hdwrap">
+      <button class="round" id="menuBtn" type="button" aria-label="Mở menu" data-ic="menu"></button>
+      <div class="ttl"><h1 id="pgT">Tổng quan</h1><div class="sub" id="pgS"></div></div>
+      <button class="pill sync" id="sync" type="button" title="Trạng thái đồng bộ Google Sheet"><span class="dot"></span><span class="tx" id="syncTx">Google Sheet</span></button>
+      <span class="pill xp" title="Điểm kinh nghiệm" data-ic="zap">XP <b id="xp">0</b></span>
+      <span class="pill tm" title="Tổng thời gian học" data-ic="clock"><b id="clk">00:00</b></span>
+      <button class="round" id="thm" type="button" aria-label="Đổi giao diện sáng tối"></button>
+      <button class="round uavatar" id="usr" type="button" aria-expanded="false" aria-controls="umenu" aria-label="Tài khoản"></button>
+      <div id="umenu" hidden></div>
+    </header>
+    <main id="stage" tabindex="-1" style="outline:none"></main>
+  </div>
+</div>
+
+<div id="login" hidden>
+  <div class="lgbox">
+    <div class="lgart">
+      <div class="art" data-emoji="👩‍💻"><img src="assets/login.jpg" alt="" onerror="this.parentNode.classList.add('noimg')"></div>
+      <div class="lgart-tx"><b>Học mà chơi, chơi mà học ✨</b><span id="lgInfo">8 chặng · bài tập tương tác · huy hiệu</span></div>
+    </div>
+    <form class="lg" id="lgf" novalidate>
+      <div class="logo"><span class="lt" data-ic="layers"></span><span>KếThừa<b>.java</b></span></div>
+      <div class="eyebrow">Lập trình hướng đối tượng</div>
+      <h1>Kế thừa trong Java</h1>
+      <p>Nhập thông tin để <strong>điểm danh</strong> và bắt đầu học. Tiến độ làm bài được lưu theo MSSV.</p>
+      <label class="fld" for="lg-name">Họ và tên<input id="lg-name" type="text" autocomplete="name" placeholder="Nguyễn Văn An"></label>
+      <label class="fld" for="lg-id">MSSV<input id="lg-id" type="text" autocomplete="off" autocapitalize="characters" placeholder="SV001"></label>
+      <label class="fld" for="lg-lop">Lớp <span>(không bắt buộc)</span><input id="lg-lop" type="text" autocomplete="off" placeholder="CNTT-K18"></label>
+      <div class="err" id="lg-err" role="alert"></div>
+      <button class="btn lgbtn" type="submit">Điểm danh &amp; vào học →</button>
+      <div class="okline" id="lg-sync"></div>
+    </form>
+  </div>
+</div>
+<div id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= cấu hình ================= */
+// Dán URL Web App của Google Apps Script (dạng https://script.google.com/macros/s/.../exec) vào SHEET_URL.
+// Hướng dẫn chi tiết: HUONG_DAN_GOOGLE_SHEET.md. Nếu để trống, có thể gửi cho sinh viên link
+// dạng  <trang>.html?sheet=<URL>  — URL sẽ được ghi nhớ trên máy của sinh viên.
+var CONFIG={
+  SHEET_URL:'https://script.google.com/macros/s/AKfycbx9igPkrKTVWFgwEeHViutBgaXm8ufHlcYPrYix7FZzdzcO3NogOv4vA7H-cr5Qu1Hgng/exec',
+  COURSE:'Kế thừa trong Java',
+  SESSION:'OOP · buổi 2 tiếng'
+};
+
+
+/* ================= tiện ích ================= */
+var mem={};
+var store={
+  get:function(k){try{var v=localStorage.getItem(k);return v==null?(mem[k]==null?null:mem[k]):v}catch(e){return mem[k]==null?null:mem[k]}},
+  set:function(k,v){mem[k]=v;try{localStorage.setItem(k,v)}catch(e){}}
+};
+function $(s,r){return (r||document).querySelector(s)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmt(s){
+  return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+}
+function h(tag,props){
+  var e=document.createElement(tag);
+  if(props){for(var k in props){var v=props[k];if(v==null||v===false)continue;
+    if(k==='class')e.className=v;
+    else if(k==='html')e.innerHTML=v;
+    else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),v);
+    else e.setAttribute(k,v===true?'':v);}}
+  var kids=Array.prototype.slice.call(arguments,2);
+  (function add(list){list.forEach(function(c){
+    if(c==null||c===false)return;
+    if(Array.isArray(c))return add(c);
+    e.append(c.nodeType?c:document.createTextNode(c));
+  })})(kids);
+  return e;
+}
+function seeded(str){
+  var x=2166136261;for(var i=0;i<str.length;i++){x^=str.charCodeAt(i);x=Math.imul(x,16777619)}
+  x=x|0||1;
+  return function(){x^=x<<13;x^=x>>>17;x^=x<<5;return ((x>>>0)%100000)/100000};
+}
+
+/* ================= tô màu cú pháp Java ================= */
+var KW={};'class extends super this new return public private protected static final void if else throw throws int double boolean instanceof for while null true false try catch long char abstract interface implements'.split(' ').forEach(function(w){KW[w]=1});
+function hlLine(s){
+  var re=/(\/\/.*$)|("(?:[^"\\]|\\.)*")|(@\w+)|(\b\d[\d_]*(?:\.\d+)?(?:[EeLlDdFf]\d*)?\b)|([A-Za-z_]\w*)|([\s\S])/g,out='',m;
+  while((m=re.exec(s))){
+    if(m[1])out+='<span class="c">'+esc(m[1])+'</span>';
+    else if(m[2])out+='<span class="s">'+esc(m[2])+'</span>';
+    else if(m[3])out+='<span class="a">'+esc(m[3])+'</span>';
+    else if(m[4])out+='<span class="n">'+esc(m[4])+'</span>';
+    else if(m[5]){var w=m[5];out+=KW[w]?'<span class="k">'+w+'</span>':(/^[A-Z]/.test(w)?'<span class="t">'+w+'</span>':esc(w))}
+    else out+=esc(m[6]);
+  }
+  return out;
+}
+function codeEl(code,o){
+  o=o||{};
+  var lines=code.replace(/\n$/,'').split('\n');
+  var inner=h('div',{class:'code-in'});
+  var rows=lines.map(function(t,i){
+    var row=h(o.interactive?'button':'div',{class:'cl',type:o.interactive?'button':null,'aria-pressed':o.interactive?'false':null});
+    row.append(h('span',{class:'no'},String(i+1)),h('span',{class:'tx',html:hlLine(t)||' '}));
+    if(o.mark&&o.mark.indexOf(i+1)>=0)row.classList.add('mk');
+    inner.append(row);return row;
+  });
+  return {el:h('div',{class:'code'},inner),rows:rows,lines:lines};
+}
+
+/* ================= nội dung bài giảng ================= */
+function L(n,s,f){return {n:n,s:s,f:f||[]}}
+
+var CODE_DUP=`class SinhVien {
+    private String ten;
+    private int tuoi;
+    private String maSV;
+    public void setTuoi(int tuoi) {
+        if (tuoi < 0 || tuoi > 150) throw new IllegalArgumentException("Tuổi không hợp lệ");
+        this.tuoi = tuoi;
+    }
+    public String gioiThieu() { return "Tôi là " + ten + ", " + tuoi + " tuổi"; }
+}
+
+class GiangVien {
+    private String ten;       // lặp lại
+    private int tuoi;         // lặp lại
+    private String boMon;
+    public void setTuoi(int tuoi) {   // lặp lại
+        if (tuoi < 0 || tuoi > 150) throw new IllegalArgumentException("Tuổi không hợp lệ");
+        this.tuoi = tuoi;
+    }
+    public String gioiThieu() { return "Tôi là " + ten + ", " + tuoi + " tuổi"; }   // lặp lại
+}`;
+
+var CODE_EXTENDS=`class Nguoi {                          // lớp cha
+    private String ten;
+    private int tuoi;
+    public Nguoi(String ten, int tuoi) { setTen(ten); setTuoi(tuoi); }
+    public String getTen() { return ten; }
+    public void setTen(String ten) {
+        if (ten == null || ten.isBlank()) throw new IllegalArgumentException("Tên không được rỗng");
+        this.ten = ten.trim();
+    }
+    public void setTuoi(int tuoi) {
+        if (tuoi < 0 || tuoi > 150) throw new IllegalArgumentException("Tuổi phải trong khoảng 0..150");
+        this.tuoi = tuoi;
+    }
+    public String gioiThieu() { return "Tôi là " + ten + ", " + tuoi + " tuổi"; }
+}
+
+class SinhVien extends Nguoi {         // lớp con
+    private String maSV;
+    public SinhVien(String ten, int tuoi, String maSV) {
+        super(ten, tuoi);              // gọi constructor lớp cha
+        this.maSV = maSV;
+    }
+    public String getMaSV() { return maSV; }
+}`;
+
+var T1_CODE=`class A {
+    A() { System.out.println("Constructor A"); }
+}
+class B extends A {
+    B() {                       // trình biên dịch tự chèn super();
+        System.out.println("Constructor B");
+    }
+}
+class C extends B {
+    C() {                       // tự chèn super();
+        System.out.println("Constructor C");
+    }
+}
+new C();`;
+function LY1(){var s=arguments;return ['Object','A','B','C'].map(function(n,i){return L(n,s[i])})}
+var T1=[
+ {l:14,st:['main'],ly:LY1('wait','wait','wait','wait'),note:'`new C()` cấp phát bộ nhớ cho cả đối tượng: bên trong là các lớp chồng nhau Object, A, B, C. Chưa lớp nào được khởi tạo.'},
+ {l:10,st:['main','C()'],ly:LY1('wait','wait','wait','run'),note:'Vào constructor `C()`. Chưa in gì, vì câu lệnh đầu tiên là `super()` mà trình biên dịch tự chèn.'},
+ {l:5,st:['main','C()','B()'],ly:LY1('wait','wait','run','run'),note:'`C()` gọi `super()`, nên chạy sang `B()`. Vẫn chưa in gì: `B()` cũng có `super()` ngầm.'},
+ {l:2,st:['main','C()','B()','A()'],ly:LY1('done','run','run','run'),note:'`B()` gọi `super()`, nên chạy sang `A()`. Lớp `A` kế thừa `Object`, nên `Object()` chạy xong ngay, không in gì.'},
+ {l:2,st:['main','C()','B()','A()'],ly:LY1('done','done','run','run'),out:'Constructor A',note:'Thân của `A()` chạy trước tiên: in **Constructor A**. Lớp gốc luôn xong trước.'},
+ {l:6,st:['main','C()','B()'],ly:LY1('done','done','done','run'),out:'Constructor B',note:'`A()` xong, quay về `B()`. Bây giờ mới tới thân của `B()`: in **Constructor B**.'},
+ {l:11,st:['main','C()'],ly:LY1('done','done','done','done'),out:'Constructor C',note:'`B()` xong, quay về `C()`: in **Constructor C**.'},
+ {l:14,st:['main'],ly:LY1('done','done','done','done'),note:'Đối tượng hoàn tất. Thứ tự in ra là A, B, C: **từ lớp gốc đi xuống lớp con**, vì lớp con có thể dựa vào phần của lớp cha.'}
+];
+
+var T2_CODE=`class NhanVien {
+    private String ten;
+    private double luong;
+    NhanVien(String ten, double luong) {
+        this.ten = ten;
+        setLuong(luong);
+    }
+    void setLuong(double l) {
+        if (l <= 0) throw new IllegalArgumentException("Lương phải > 0");
+        this.luong = l;
+    }
+}
+class QuanLy extends NhanVien {
+    private double phuCap;
+    QuanLy(String ten, double luong, double pc) {
+        super(ten, luong);
+        this.phuCap = pc;
+    }
+}
+new QuanLy("An", -5, 100);`;
+function LY2(a,b,c,ten,luong,pc){return [L('Object',a),L('NhanVien',b,[['ten',ten,1],['luong',luong,1]]),L('QuanLy',c,[['phuCap',pc,1]])]}
+var T2=[
+ {l:20,st:['main'],ly:LY2('wait','wait','wait','null','0.0','0.0'),note:'`new QuanLy("An", -5, 100)`: các trường mới chỉ có giá trị mặc định (null, 0.0).'},
+ {l:15,st:['main','QuanLy(...)'],ly:LY2('done','wait','run','null','0.0','0.0'),note:'Vào `QuanLy(...)`.'},
+ {l:16,st:['main','QuanLy(...)'],ly:LY2('done','wait','run','null','0.0','0.0'),note:'Dòng đầu: `super(ten, luong)` gọi constructor của `NhanVien`.'},
+ {l:5,st:['main','QuanLy(...)','NhanVien(...)'],ly:LY2('done','run','run','"An"','0.0','0.0'),note:'Trong `NhanVien(...)`: gán `ten = "An"`.'},
+ {l:6,st:['main','QuanLy(...)','NhanVien(...)','setLuong(-5)'],ly:LY2('done','run','run','"An"','0.0','0.0'),note:'Gọi `setLuong(-5)` để kiểm tra dữ liệu.'},
+ {l:9,st:['main','QuanLy(...)','NhanVien(...)','setLuong(-5)'],ly:LY2('done','fail','wait','"An"','0.0','0.0'),err:'IllegalArgumentException: Lương phải > 0',note:'Điều kiện `l <= 0` đúng, nên ném `IllegalArgumentException`.'},
+ {l:20,st:['main'],ly:LY2('done','fail','fail','"An"','0.0','0.0'),err:'IllegalArgumentException: Lương phải > 0',note:'Ngoại lệ đi ngược qua `setLuong`, `NhanVien(...)`, `QuanLy(...)` lên `main`. Dòng 17 chưa bao giờ chạy và **đối tượng QuanLy không được tạo ra**. Quy tắc kiểm tra ở lớp cha tự bảo vệ cả lớp con.'}
+];
+
+var T3_CODE=`class Cha {
+    Cha() {
+        System.out.println("Cha gọi: " + moTa());
+    }
+    String moTa() { return "Cha"; }
+}
+class Con extends Cha {
+    private String ten = "Con";
+    Con() { System.out.println("Con xong"); }
+    @Override
+    String moTa() { return "Con có tên " + ten; }
+}
+new Con();`;
+function LY3(a,b,c,ten){return [L('Object',a),L('Cha',b),L('Con',c,[['ten',ten,1]])]}
+var T3=[
+ {l:13,st:['main'],ly:LY3('wait','wait','wait','null'),note:'`new Con()`: trường `ten` của `Con` mới chỉ có giá trị mặc định là `null`.'},
+ {l:9,st:['main','Con()'],ly:LY3('done','wait','run','null'),note:'Vào `Con()`. Câu lệnh đầu tiên là `super()` ngầm, nên chưa tới lúc khởi tạo `ten`.'},
+ {l:2,st:['main','Con()','Cha()'],ly:LY3('done','run','run','null'),note:'Chạy sang `Cha()`.'},
+ {l:3,st:['main','Con()','Cha()'],ly:LY3('done','run','run','null'),note:'`Cha()` gọi `moTa()`. Đối tượng thật là `Con`, nên Java chạy `moTa()` của **Con** (đa hình).'},
+ {l:11,st:['main','Con()','Cha()','Con.moTa()'],ly:LY3('done','run','run','null'),note:'`ten` của `Con` vẫn là `null` vì phần khởi tạo của `Con` chưa chạy.'},
+ {l:3,st:['main','Con()','Cha()'],ly:LY3('done','run','run','null'),out:'Cha gọi: Con có tên null',note:'In ra **Cha gọi: Con có tên null**.'},
+ {l:8,st:['main','Con()'],ly:LY3('done','done','run','"Con"'),note:'`Cha()` xong. Bây giờ mới khởi tạo trường của `Con`: `ten = "Con"`.'},
+ {l:9,st:['main'],ly:LY3('done','done','done','"Con"'),out:'Con xong',note:'In **Con xong**. Bài học: **không gọi phương thức có thể bị ghi đè trong constructor**.'}
+];
+
+var T4_CODE=`NhanVien nv = new NhanVienBanHang("Chi", 8_000_000, 100_000_000);
+System.out.println(nv.tinhLuong());
+QuanLy ql = (QuanLy) nv;
+System.out.println("xong");`;
+var T4=[
+ {l:1,st:['main'],v:[['nv','NhanVien','NhanVienBanHang']],note:'Upcasting: biến `nv` có **kiểu khai báo** `NhanVien` nhưng trỏ tới đối tượng **thật** là `NhanVienBanHang`. Việc này luôn hợp lệ.'},
+ {l:2,st:['main'],v:[['nv','NhanVien','NhanVienBanHang']],out:'1.3E7',note:'Gọi được vì `NhanVien` có `tinhLuong()` (kiểu khai báo quyết định **được gọi gì**). Lúc chạy dùng phiên bản của `NhanVienBanHang` (kiểu thật quyết định **chạy bản nào**): 8 triệu + 5% của 100 triệu.'},
+ {l:3,st:['main'],v:[['nv','NhanVien','NhanVienBanHang']],err:'ClassCastException: class NhanVienBanHang cannot be cast to class QuanLy',note:'Dòng này **biên dịch được** vì `QuanLy` là con của `NhanVien`. Nhưng lúc chạy Java kiểm tra đối tượng thật: `NhanVienBanHang` không phải `QuanLy`, nên ném `ClassCastException`.'},
+ {l:3,st:['main'],v:[['nv','NhanVien','NhanVienBanHang']],err:'ClassCastException: class NhanVienBanHang cannot be cast to class QuanLy',note:'Chương trình dừng, dòng 4 không bao giờ chạy. Cách an toàn: `if (nv instanceof QuanLy ql) { ... }`.'}
+];
+
+var BOSS_CODE=`class NhanVien {
+    private String ten;
+    protected double luongCoBan;
+    public NhanVien(String ten, double luongCoBan) {
+        this.ten = ten;
+        this.luongCoBan = luongCoBan;
+    }
+    public double tinhLuong() { return luongCoBan; }
+}
+class QuanLy extends NhanVien {
+    private double phuCap;
+    public QuanLy(String ten, double luongCoBan, double phuCap) {
+        this.phuCap = phuCap;
+        super(ten, luongCoBan);
+    }
+    @Override
+    public double tinhluong() {
+        return super.tinhLuong() + phuCap;
+    }
+}
+class NhanVienBanHang extends NhanVien {
+    private double doanhSo;
+    public NhanVienBanHang(String ten, double luongCoBan, double doanhSo) {
+        this.doanhSo = doanhSo;
+    }
+    @Override
+    protected double tinhLuong() {
+        return tinhLuong() + doanhSo * 0.05;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        NhanVien nv = new NhanVienBanHang("Chi", 8_000_000, 100_000_000);
+        QuanLy ql = (QuanLy) nv;
+    }
+}`;
+
+var STAGES=[
+{id:'khoi-dong',tab:'Khởi động',min:5,title:'Khởi động: code lặp lại',goal:'Nhìn một vấn đề thật trước khi học công cụ giải quyết nó.',blocks:[
+  {k:'md',html:'<p>Sau buổi này bạn sẽ biết dùng <strong>kế thừa</strong> để tái sử dụng code đúng chỗ, gọi đúng constructor của lớp cha, ghi đè phương thức an toàn, khóa những gì không được thay đổi bằng <code>final</code>, và nhận ra khoảng 25 lỗi thường gặp liên quan đến kế thừa.</p><p>Hãy đọc hai lớp dưới đây. Các dòng được tô vàng là phần bị lặp.</p>'},
+  {k:'code',code:CODE_DUP,mark:[2,3,5,6,7,9,13,14,16,17,18,20]},
+  {k:'quiz',id:'s0-q1',topic:'extends',tag:'Câu hỏi',q:'Quy tắc kiểm tra tuổi cần đổi từ `0..150` thành `0..120`. Bạn phải sửa ở bao nhiêu chỗ trong code trên?',options:['1 chỗ','2 chỗ','3 chỗ','Không cần sửa'],correct:1,explain:'Quy tắc nằm trong `setTuoi` của **cả hai** lớp. Quên sửa một chỗ là có lỗi. Giải pháp: đưa phần chung vào một lớp cha, đó là chủ đề của chặng 1.',hints:['Đếm xem `setTuoi` xuất hiện trong mấy lớp.']}
+]},
+
+{id:'extends',tab:'extends & is-a',min:20,title:'Kế thừa và từ khóa extends',goal:'Lớp con nhận lại thuộc tính và phương thức của lớp cha, rồi bổ sung thêm.',blocks:[
+  {k:'md',html:'<p><strong>Kế thừa</strong> cho phép lớp con (subclass) nhận lại thành viên của lớp cha (superclass). Lợi ích: tái sử dụng code, mở rộng mà không sửa lớp cũ, và là nền tảng cho đa hình. Quy tắc kiểm tra tuổi chỉ nằm ở <strong>một nơi</strong> (<code>Nguoi.setTuoi</code>) và mọi lớp con đều được hưởng.</p>'},
+  {k:'code',code:CODE_EXTENDS},
+  {k:'md',html:'<h2>Cây kế thừa</h2><p>Mọi lớp đều kế thừa (trực tiếp hoặc gián tiếp) từ <code>java.lang.Object</code>. Java chỉ cho <strong>một</strong> lớp cha trực tiếp, nhưng cho phép kế thừa nhiều tầng.</p>'},
+  {k:'tree'},
+  {k:'md',html:'<h2>Lớp con thừa hưởng những gì?</h2>'},
+  {k:'html',html:'<div class="tbl"><table><thead><tr><th>Thành phần của lớp cha</th><th>Lớp con dùng được?</th><th>Ghi chú</th></tr></thead><tbody><tr><td><code>public</code>, <code>protected</code></td><td>Có</td><td>Dùng tên trực tiếp</td></tr><tr><td><code>private</code></td><td><strong>Không</strong> truy cập trực tiếp</td><td>Vẫn nằm trong đối tượng; dùng getter/setter của lớp cha</td></tr><tr><td>Constructor</td><td><strong>Không</strong> thừa kế</td><td>Phải gọi bằng <code>super(...)</code></td></tr><tr><td><code>static</code></td><td>Có (qua tên lớp)</td><td>Không ghi đè, chỉ bị ẩn</td></tr></tbody></table></div>'},
+  {k:'md',html:'<div class="note"><p>Lời khuyên: để thuộc tính là <code>private</code> và dùng getter/setter có kiểm tra dữ liệu. Dùng <code>protected</code> cho thuộc tính có thể làm lớp con phá vỡ quy tắc của lớp cha.</p></div><h2>Bài tập</h2>'},
+  {k:'triage',id:'s1-isa',topic:'extends',title:'Quan hệ nào nên dùng kế thừa?',
+    choices:[{id:'isa',label:'Kế thừa (is-a)'},{id:'hasa',label:'Chứa thuộc tính (has-a)'}],
+    items:[
+      {text:'`SinhVien` và `Nguoi`: sinh viên **là một** người.',answer:'isa',why:'Đọc thành câu "B là một A" nghe hợp lý, nên dùng `extends`.'},
+      {text:'`XeHoi` và `DongCo`.',answer:'hasa',why:'Xe hơi không phải là một động cơ, xe hơi **có một** động cơ. Dùng composition: `private DongCo dongCo;`.'},
+      {text:'`Meo` và `DongVat`.',answer:'isa',why:'Mèo là một động vật.'},
+      {text:'`ThuVien` và `Sach`.',answer:'hasa',why:'Thư viện **có** sách, không phải là sách.'},
+      {text:'`HinhTron` và `Hinh`.',answer:'isa',why:'Hình tròn là một hình.'},
+      {text:'`NganHang` và `TaiKhoan`.',answer:'hasa',why:'Ngân hàng **có** nhiều tài khoản, nên chứa danh sách `TaiKhoan` chứ không kế thừa.'}
+    ]},
+  {k:'triage',id:'s1-rules',topic:'extends',title:'Đoạn code này có lỗi không?',
+    choices:[{id:'compile',label:'Lỗi biên dịch'},{id:'runtime',label:'Lỗi lúc chạy'},{id:'ok',label:'Chạy bình thường'}],
+    items:[
+      {code:'class A { private int x; }\nclass B extends A {\n    void f() { x = 5; }\n}',answer:'compile',why:'`x` là `private` trong `A`, lớp con không truy cập trực tiếp được. Dùng setter, hoặc `protected` (cân nhắc ưu nhược điểm).'},
+      {code:'class C extends A, B { }',answer:'compile',why:'Java chỉ cho **một** lớp cha trực tiếp. Chia sẻ nhiều hành vi sẽ dùng `interface` (buổi sau).'},
+      {code:'SinhVien sv = new SinhVien("An", 20, "SV001");\nboolean b = sv instanceof GiangVien;',answer:'compile',why:'`SinhVien` và `GiangVien` không cùng một nhánh kế thừa, nên Java báo kiểu không tương thích ngay lúc biên dịch.'},
+      {code:'SinhVien sv = new SinhVien("An", 20, "SV001");\nSystem.out.println(sv instanceof Nguoi);',answer:'ok',why:'Sinh viên là một người, nên in ra `true`.'},
+      {code:'class A extends B { }\nclass B extends A { }',answer:'compile',why:'Kế thừa vòng tròn là lỗi (cyclic inheritance).'}
+    ]}
+]},
+
+{id:'constructor',tab:'Constructor & super',min:25,title:'Constructor và từ khóa super',goal:'Dự đoán thứ tự khởi tạo, rồi chạy từng bước để kiểm chứng.',blocks:[
+  {k:'md',html:'<p>Constructor <strong>không được thừa kế</strong>. Khi tạo đối tượng lớp con, phần "lớp cha" bên trong nó phải được khởi tạo trước, nên lớp con phải gọi constructor lớp cha bằng <code>super(...)</code>.</p><ol><li>Constructor lớp con <strong>luôn</strong> gọi một constructor lớp cha trước tiên.</li><li><code>super(...)</code> (nếu viết) phải là <strong>câu lệnh đầu tiên</strong>.</li><li>Nếu không viết, trình biên dịch tự chèn <code>super();</code> (constructor không tham số).</li><li>Nếu lớp cha <strong>không có</strong> constructor không tham số, lớp con <strong>bắt buộc</strong> gọi <code>super(...)</code> với đúng đối số.</li><li>Không gọi được cả <code>this(...)</code> và <code>super(...)</code> trong cùng một constructor.</li></ol><h2>Dự đoán trước, chạy sau</h2>'},
+  {k:'quiz',id:'s2-q1',topic:'constructor',tag:'Dự đoán',q:'Đoạn code bên dưới (ba lớp A, B, C) khi chạy `new C();` sẽ in ra theo thứ tự nào?',code:T1_CODE,options:['Constructor A, B, C','Constructor C, B, A','Constructor C, A, B','Chỉ in Constructor C'],correct:0,explain:'Constructor chạy **từ gốc xuống lớp con**: cha hoàn tất trước, con chạy sau. Bấm từng bước ở bên dưới để xem.',hints:['Mỗi constructor bắt đầu bằng `super()` ngầm.']},
+  {k:'trace',id:'t1',title:'Chạy từng bước: new C()',code:T1_CODE,steps:T1},
+  {k:'quiz',id:'s2-q2',topic:'constructor',tag:'Dự đoán',q:'`new B(5)` in ra những gì?',code:`class A {
+    A() { System.out.println("A"); }
+}
+class B extends A {
+    B() { System.out.println("B"); }
+    B(int x) {
+        this();
+        System.out.println("B-int");
+    }
+}`,options:[{t:'A\nB\nB-int',mono:1},{t:'B-int\nA\nB',mono:1},{t:'A\nB-int\nB',mono:1},{t:'B\nA\nB-int',mono:1}],correct:0,explain:'`B(int)` gọi `this()` nên chuyển sang `B()`. `B()` gọi `super()` ngầm nên `A()` chạy trước (in A), rồi thân `B()` (in B), cuối cùng mới tới dòng `B-int`.',hints:['`this()` chuyển việc cho constructor `B()` ở trên, rồi `B()` mới gọi `super()`.']},
+  {k:'fill',id:'s2-fill',topic:'constructor',intro:'Điền từ khóa còn thiếu để hai constructor của `QuanLy` hoạt động đúng.',code:`class QuanLy extends NhanVien {
+    private double phuCap;
+
+    public QuanLy(String ten, double luong, double phuCap) {
+        {{a}}(ten, luong);
+        setPhuCap(phuCap);
+    }
+
+    public QuanLy(String ten, double luong) {
+        {{b}}(ten, luong, 0);
+    }
+}`,blanks:{a:{re:'^super$',w:7},b:{re:'^this$',w:7}},explain:'Constructor đầy đủ gọi lớp cha bằng `super(ten, luong)`. Constructor ngắn chuyển cho constructor đầy đủ bằng `this(ten, luong, 0)`, và không được viết thêm `super(...)` ở đó.',hints:['Chỗ trống thứ nhất gọi lớp cha. Chỗ thứ hai gọi constructor khác của chính lớp này.']},
+  {k:'md',html:'<h2>Khi dữ liệu sai thì sao?</h2><p>Quy tắc kiểm tra ở lớp cha tự lan xuống lớp con. Xem điều gì xảy ra với <code>new QuanLy("An", -5, 100)</code>.</p>'},
+  {k:'trace',id:'t2',title:'Chạy từng bước: ngoại lệ trong constructor',code:T2_CODE,steps:T2},
+  {k:'quiz',id:'s2-q3',topic:'constructor',tag:'Câu hỏi',q:'Vì sao `class B extends A { }` không biên dịch được khi `A` chỉ có constructor `A(int x)`?',options:['Vì `B` thiếu `@Override`','Vì trình biên dịch tự chèn `super()` nhưng `A` không có constructor không tham số','Vì lớp con không được kế thừa lớp có constructor','Biên dịch được, chỉ lỗi lúc chạy'],correct:1,explain:'Đây là lỗi **số một** của bài. Cách sửa: gọi `super(...)` đúng đối số, hoặc thêm constructor không tham số cho `A` (chỉ khi có giá trị mặc định hợp lý).',hints:['`B` không viết constructor nào, nên trình biên dịch tự chèn một cái. Cái đó gọi gì?']},
+  {k:'parsons',id:'s2-pars',topic:'constructor',intro:'Sắp xếp các dòng thành constructor đúng. Gợi ý: `super(...)` phải đứng đầu, và dữ liệu cần được kiểm tra trước khi gán.',lines:[
+    'public QuanLy(String ten, double luong, double phuCap) {',
+    '    super(ten, luong);',
+    '    if (phuCap < 0) throw new IllegalArgumentException("Phụ cấp không được âm");',
+    '    this.phuCap = phuCap;',
+    '}'],explain:'`super(...)` đứng đầu, sau đó kiểm tra dữ liệu, rồi mới gán vào trường.',hints:['Dòng `{` mở đầu và `}` đóng cuối giữ nguyên chỗ của chúng.']},
+  {k:'md',html:'<h2>Cạm bẫy: gọi phương thức bị ghi đè trong constructor cha</h2>'},
+  {k:'quiz',id:'s2-q4',topic:'constructor',tag:'Dự đoán',q:'`new Con()` in ra những gì?',code:T3_CODE,options:[{t:'Cha gọi: Con có tên Con\nCon xong',mono:1},{t:'Cha gọi: Con có tên null\nCon xong',mono:1},{t:'Lỗi biên dịch',mono:1},{t:'NullPointerException',mono:1}],correct:1,explain:'Phương thức ghi đè của **lớp con** chạy (đa hình) trong khi trường của lớp con **chưa được khởi tạo**. Xem từng bước bên dưới.',hints:['Khi `Cha()` đang chạy, trường `ten = "Con"` của `Con` đã được gán chưa?']},
+  {k:'trace',id:'t3',title:'Chạy từng bước: phương thức bị ghi đè',code:T3_CODE,steps:T3}
+]},
+
+{id:'ghi-de',tab:'Ghi đè',min:25,title:'Ghi đè phương thức và @Override',goal:'Phân biệt override với overload, và để trình biên dịch bắt lỗi giúp bạn.',blocks:[
+  {k:'md',html:'<p><strong>Ghi đè (overriding)</strong> là khi lớp con định nghĩa lại một phương thức của lớp cha với <strong>cùng tên và cùng danh sách tham số</strong>. Biến có kiểu khai báo là cha nhưng trỏ tới đối tượng con vẫn chạy phiên bản <strong>của đối tượng thật</strong> (đa hình lúc chạy).</p>'},
+  {k:'code',code:`class NhanVien {
+    protected double luongCoBan;
+    public double tinhLuong() { return luongCoBan; }
+}
+class QuanLy extends NhanVien {
+    private double phuCap;
+    @Override
+    public double tinhLuong() {
+        return super.tinhLuong() + phuCap;   // mở rộng hành vi của cha
+    }
+}`},
+  {k:'md',html:'<p><code>@Override</code> báo cho trình biên dịch: "phương thức này <strong>phải</strong> ghi đè phương thức của cha, hãy kiểm tra giúp tôi". Gõ sai tên hay sai tham số sẽ báo lỗi ngay. Quy ước: <strong>mọi phương thức ghi đè đều có <code>@Override</code></strong>.</p><h2>Quy tắc ghi đè</h2>'},
+  {k:'html',html:'<div class="tbl"><table><thead><tr><th>Yếu tố</th><th>Quy tắc</th></tr></thead><tbody><tr><td>Tên, tham số</td><td>Giống hệt (tên phân biệt hoa thường). Khác tham số là overload.</td></tr><tr><td>Kiểu trả về</td><td>Giống hoặc là kiểu con (covariant)</td></tr><tr><td>Phạm vi truy cập</td><td>Giữ nguyên hoặc <strong>rộng hơn</strong>, không được hẹp hơn</td></tr><tr><td>Ngoại lệ checked</td><td>Không ném thêm hoặc rộng hơn so với cha</td></tr><tr><td><code>static</code>, <code>private</code>, <code>final</code></td><td>Không ghi đè được</td></tr></tbody></table></div>'},
+  {k:'md',html:'<h2>Bài tập</h2>'},
+  {k:'quiz',id:'s3-q1',topic:'override',tag:'Dự đoán',q:'`c.in("abc")` in ra gì?',code:`class Cha {
+    void in(Object o) { System.out.println("Cha-Object"); }
+}
+class Con extends Cha {
+    void in(String s) { System.out.println("Con-String"); }
+}
+
+Cha c = new Con();
+c.in("abc");`,options:['Con-String','Cha-Object','Lỗi biên dịch','Lỗi lúc chạy'],correct:1,explain:'`in(String)` và `in(Object)` khác tham số nên đây là **overload**, không phải override. Việc chọn phương thức xảy ra lúc **biên dịch** theo kiểu khai báo `Cha`, mà `Cha` chỉ biết `in(Object)`. Thêm `@Override` trước `in(String s)` sẽ báo lỗi ngay.',hints:['Hai phương thức `in` có cùng danh sách tham số không?','Kiểu khai báo của `c` là `Cha`. `Cha` biết những phương thức nào?']},
+  {k:'bug',id:'s3-bug',topic:'override',intro:'Bấm vào các dòng bạn cho là có lỗi hoặc có vấn đề, rồi bấm Kiểm tra. Có 3 chỗ.',code:`class NhanVien {
+    public double tinhLuong() { return 10_000_000; }
+    public String moTa() { return "Nhân viên"; }
+    public void in(Object o) { System.out.println("Object"); }
+}
+class QuanLy extends NhanVien {
+    private double phuCap = 5_000_000;
+    public double tinhluong() {
+        return super.tinhLuong() + phuCap;
+    }
+    @Override
+    protected String moTa() {
+        return "Quản lý";
+    }
+    @Override
+    public void in(String s) { System.out.println("String"); }
+}`,bugs:[
+    {lines:[8],why:'Gõ sai tên (`tinhluong`) và thiếu `@Override`. Code vẫn biên dịch nhưng đây là phương thức mới, `tinhLuong()` của cha vẫn chạy. Thêm `@Override` sẽ bắt được lỗi.'},
+    {lines:[12],why:'Cha khai báo `public`, con hạ xuống `protected`. Ghi đè không được thu hẹp phạm vi truy cập (nguyên lý thay thế Liskov).'},
+    {lines:[16],why:'`@Override` đặt trên `in(String)` nhưng cha chỉ có `in(Object)`. Đây là overload, nên trình biên dịch báo lỗi.'}
+  ],hints:['Một chỗ thiếu `@Override`, một chỗ đổi phạm vi truy cập, một chỗ `@Override` đặt sai.']},
+  {k:'triage',id:'s3-tri',topic:'override',title:'Đoạn code này có lỗi không?',
+    choices:[{id:'compile',label:'Lỗi biên dịch'},{id:'runtime',label:'Lỗi lúc chạy'},{id:'ok',label:'Chạy bình thường'}],
+    items:[
+      {code:'class Nguoi { public Nguoi taoBanSao() { return new Nguoi(); } }\nclass SinhVien extends Nguoi {\n    @Override\n    public SinhVien taoBanSao() { return new SinhVien(); }\n}',answer:'ok',why:'Hợp lệ: kiểu trả về `SinhVien` là kiểu con của `Nguoi` (covariant return type).'},
+      {code:'class A { public void f() { } }\nclass B extends A {\n    @Override\n    public void f() throws Exception { }\n}',answer:'compile',why:'Con không được ném thêm ngoại lệ checked mà cha không khai báo.'},
+      {code:'class A { static void g() { } }\nclass B extends A {\n    @Override\n    static void g() { }\n}',answer:'compile',why:'Phương thức `static` không ghi đè được, chỉ bị ẩn (hiding), nên `@Override` bị báo lỗi.'},
+      {code:'class A { void f(int x) { System.out.println("A"); } }\nclass B extends A { void f(long x) { System.out.println("B"); } }\nA a = new B();\na.f(1);',answer:'ok',why:'`f(long)` chỉ là overload, nên không lỗi. `a` có kiểu khai báo `A`, chỉ thấy `f(int)`, nên in ra `A`.'},
+      {code:'class A { private void f() { } }\nclass B extends A {\n    @Override\n    void f() { }\n}',answer:'compile',why:'Phương thức `private` của cha con không thấy, nên không thể ghi đè.'}
+    ]},
+  {k:'md',html:'<h2>Overloading và overriding</h2>'},
+  {k:'html',html:'<div class="tbl"><table><thead><tr><th>Tiêu chí</th><th>Overloading (nạp chồng)</th><th>Overriding (ghi đè)</th></tr></thead><tbody><tr><td>Xảy ra ở</td><td>Cùng một lớp (hoặc cha-con)</td><td>Lớp con và lớp cha</td></tr><tr><td>Tham số</td><td><strong>Khác nhau</strong></td><td><strong>Giống hệt</strong></td></tr><tr><td>Chọn phiên bản lúc</td><td><strong>Biên dịch</strong> (theo kiểu khai báo)</td><td><strong>Chạy</strong> (theo kiểu thật của đối tượng)</td></tr><tr><td>Dùng <code>@Override</code></td><td>Không</td><td>Có</td></tr></tbody></table></div>'}
+]},
+
+{id:'ep-kieu',tab:'Ép kiểu',min:15,title:'Upcasting, downcasting và instanceof',goal:'Kiểu khai báo quyết định bạn được gọi gì. Kiểu thật quyết định phiên bản nào chạy.',blocks:[
+  {k:'md',html:'<p><strong>Upcasting</strong> (gán đối tượng con cho biến kiểu cha) luôn an toàn và tự động. <strong>Downcasting</strong> (đưa biến kiểu cha về kiểu con) phải viết tường minh và <strong>có thể lỗi lúc chạy</strong>. Dùng <code>instanceof</code> để kiểm tra trước. Từ Java 16 có thể viết <code>if (nv instanceof QuanLy ql)</code>.</p>'},
+  {k:'trace',id:'t4',title:'Chạy từng bước: upcasting và downcasting',code:T4_CODE,steps:T4},
+  {k:'md',html:'<h2>Tự thử nghiệm</h2><p>Chọn đối tượng thật và một thao tác, rồi xem điều gì xảy ra.</p>'},
+  {k:'castlab'},
+  {k:'triage',id:'s4-tri',topic:'cast',title:'Đoạn code này có lỗi không?',
+    choices:[{id:'compile',label:'Lỗi biên dịch'},{id:'runtime',label:'Lỗi lúc chạy'},{id:'ok',label:'Chạy bình thường'}],
+    items:[
+      {code:'NhanVien nv = new QuanLy("Binh", 15_000_000, 5_000_000);\nnv.setPhuCap(1_000_000);',answer:'compile',why:'Kiểu khai báo là `NhanVien`, và `NhanVien` không có `setPhuCap`. Muốn gọi phải ép kiểu về `QuanLy`.'},
+      {code:'NhanVien nv = new NhanVienBanHang("Chi", 8_000_000, 100_000_000);\nQuanLy ql = (QuanLy) nv;',answer:'runtime',why:'Biên dịch được, nhưng đối tượng thật là `NhanVienBanHang` nên ném `ClassCastException`.'},
+      {code:'NhanVien nv = new QuanLy("Binh", 15_000_000, 5_000_000);\nQuanLy ql = (QuanLy) nv;',answer:'ok',why:'Đối tượng thật là `QuanLy`, nên ép kiểu thành công.'},
+      {code:'NhanVien nv = null;\nboolean b = nv instanceof QuanLy;',answer:'ok',why:'`instanceof` với `null` luôn trả về `false` và không bao giờ ném lỗi.'},
+      {code:'String s = "abc";\nInteger i = (Integer) s;',answer:'compile',why:'`String` và `Integer` không cùng nhánh kế thừa, nên ép kiểu bị chặn ngay lúc biên dịch.'}
+    ]}
+]},
+
+{id:'final',tab:'final',min:8,title:'Từ khóa final',goal:'Khóa lại những gì không được phép thay đổi.',blocks:[
+  {k:'html',html:'<div class="tbl"><table><thead><tr><th>Dùng với</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td>Biến</td><td>Chỉ gán giá trị một lần</td></tr><tr><td>Phương thức</td><td>Lớp con không được ghi đè</td></tr><tr><td>Lớp</td><td>Không ai được kế thừa (ví dụ <code>String</code>, <code>Integer</code>)</td></tr></tbody></table></div>'},
+  {k:'md',html:'<div class="note"><p><code>final</code> với biến tham chiếu khóa <strong>tham chiếu</strong> (không trỏ sang đối tượng khác được) chứ không khóa <strong>nội dung</strong> của đối tượng.</p></div>'},
+  {k:'triage',id:'s5-tri',topic:'final',title:'Đoạn code này có lỗi không?',
+    choices:[{id:'compile',label:'Lỗi biên dịch'},{id:'runtime',label:'Lỗi lúc chạy'},{id:'ok',label:'Chạy bình thường'}],
+    items:[
+      {code:'final int x = 5;\nx = 6;',answer:'compile',why:'Biến `final` chỉ gán một lần.'},
+      {code:'final java.util.List<String> ds = new java.util.ArrayList<>();\nds.add("a");',answer:'ok',why:'`final` khóa tham chiếu `ds`, không khóa nội dung danh sách, nên vẫn thêm phần tử được.'},
+      {code:'class A { public final void f() { } }\nclass B extends A {\n    @Override\n    public void f() { }\n}',answer:'compile',why:'Phương thức `final` không được ghi đè.'},
+      {code:'class MyString extends String { }',answer:'compile',why:'`String` là lớp `final`, không thể kế thừa.'},
+      {code:'final int[] a = {1, 2};\na[0] = 9;',answer:'ok',why:'Mảng được tham chiếu bởi `a` vẫn sửa phần tử được; chỉ không gán `a` sang mảng khác.'}
+    ]}
+]},
+
+{id:'boss',tab:'Boss',min:17,title:'Boss cuối: hệ thống tính lương',goal:'Dùng mọi thứ vừa học để tìm tất cả lỗi ẩn trong một chương trình.',blocks:[
+  {k:'md',html:'<p>Công ty có ba loại nhân viên. Đoạn code bên dưới chứa <strong>6 lỗi</strong> thuộc các chủ đề: <code>super</code>, ghi đè, truy cập, đệ quy và ép kiểu. Bấm vào các dòng có lỗi, rồi bấm Kiểm tra. Bạn có thể kiểm tra nhiều lần.</p>'},
+  {k:'bug',id:'boss-bug',topic:'boss',intro:'Tìm 6 lỗi. Chọn nhầm dòng không có lỗi sẽ bị đánh dấu đỏ.',code:BOSS_CODE,bugs:[
+    {lines:[13,14],why:'`super(...)` phải là câu lệnh **đầu tiên** của constructor. Cần đặt nó lên trước `this.phuCap = phuCap;`.'},
+    {lines:[17],why:'Gõ sai tên `tinhluong` nên `@Override` báo lỗi. Phải viết đúng `tinhLuong`.'},
+    {lines:[23,24],why:'Thiếu `super(ten, luongCoBan);`. `NhanVien` không có constructor không tham số nên lớp con bắt buộc gọi `super(...)` tường minh.'},
+    {lines:[27],why:'Cha khai báo `public`, con hạ xuống `protected`. Ghi đè không được thu hẹp phạm vi truy cập.'},
+    {lines:[28],why:'`tinhLuong()` tự gọi chính nó nên đệ quy vô hạn (`StackOverflowError`). Phải dùng `super.tinhLuong()`.'},
+    {lines:[34],why:'Đối tượng thật là `NhanVienBanHang`, ép về `QuanLy` sẽ ném `ClassCastException`. Cần kiểm tra bằng `instanceof` trước.'}
+  ],hints:['Hai lỗi liên quan tới `super(...)`, hai lỗi ở phương thức `tinhLuong` của con, một lỗi về phạm vi truy cập, một lỗi ép kiểu.','Đọc kỹ từng constructor, rồi từng phương thức `tinhLuong`.']},
+  {k:'quiz',id:'boss-q',topic:'boss',tag:'Câu cuối',q:'Giả sử code đã được sửa đúng. Chạy đoạn sau in ra gì?\n`NhanVien nv = new NhanVien("An", 10_000_000);`\n`NhanVien ql = new QuanLy("Binh", 15_000_000, 5_000_000);`\n`NhanVien bh = new NhanVienBanHang("Chi", 8_000_000, 100_000_000);`\n`NhanVien[] ds = {nv, ql, bh};`\n`double tong = 0;`\n`for (NhanVien x : ds) tong += x.tinhLuong();`\n`System.out.println(tong);`',options:['4.3E7','3.3E7','5.3E7','Lỗi biên dịch'],correct:0,explain:'Mỗi phần tử chạy phiên bản của đối tượng thật: An 10 triệu, Binh 15 + 5 = 20 triệu, Chi 8 + 5% × 100 triệu = 13 triệu. Tổng 43 triệu, in ra `4.3E7`.',hints:['Tính lương từng người theo đúng lớp thật của họ rồi cộng lại.']}
+]},
+
+{id:'tong-ket',tab:'Tổng kết',min:5,title:'Tổng kết buổi học',goal:'Xem bạn đã làm được gì và nên ôn lại chỗ nào.',blocks:[
+  {k:'summary'}
+]}
+];
+
+/* ================= biểu tượng ================= */
+var ICONS={
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  rocket:'<path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0"/><path d="M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/>',
+  tree:'<circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/>',
+  box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/>',
+  refresh:'<path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/>',
+  shuffle:'<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  crown:'<path d="m2 7 5 4 5-7 5 7 5-4-2 12H4z"/><path d="M4 19h16"/>',
+  chart:'<path d="M3 3v18h18"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-3"/>',
+  zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  sheet:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/>',
+  play:'<path d="M8 5v14l11-7z"/>',
+  download:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  layers:'<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  send:'<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>'
+};
+function ic(n,c){return '<svg class="ic'+(c?' '+c:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[n]||'')+'</svg>'}
+function icon(n,c){var t=document.createElement('span');t.innerHTML=ic(n,c);return t.firstChild}
+var STAGE_IC=['rocket','tree','box','refresh','shuffle','lock','crown','chart'];
+var STAGE_COL=['#a68cf2','#f28aa6','#f5b94a','#6f9bf2','#5cc48a','#9b8cf0','#f27f6a','#7c5ce6'];
+var STAGE_SHORT=['Khởi động','extends','super','Ghi đè','Ép kiểu','final','Boss','Tổng kết'];
+function pad(n){return String(n).padStart(2,'0')}
+
+/* ================= trạng thái ================= */
+var user=null,S=null,cur=-1,lastInteract=Date.now();
+var TOPIC_OF={},IDS_OF=[],ALL_IDS=[],TITLE_OF={};
+var TOPIC_NAME={extends:'Kế thừa và is-a',constructor:'Constructor và super',override:'Ghi đè và @Override',cast:'Ép kiểu và instanceof',final:'Từ khóa final',boss:'Boss cuối'};
+var TOPIC_STAGE={extends:1,constructor:2,override:3,cast:4,final:5,boss:6};
+
+function blockIds(b){
+  if(b.k==='quiz'||b.k==='bug'||b.k==='fill'||b.k==='parsons')return [b.id];
+  if(b.k==='triage')return b.items.map(function(_,i){return b.id+'.'+i});
+  return [];
+}
+STAGES.forEach(function(st,si){
+  IDS_OF[si]=[];
+  st.blocks.forEach(function(b){blockIds(b).forEach(function(id){
+    IDS_OF[si].push(id);ALL_IDS.push(id);TOPIC_OF[id]=b.topic;TITLE_OF[id]='Chặng '+si+' · '+(b.title||b.tag||b.k)+(b.k==='triage'?' (câu '+(+id.split('.')[1]+1)+')':'');
+  })});
+});
+
+function skey(id){return 'ktt.s.'+id}
+function loadState(id){
+  var raw=store.get(skey(id)),d=null;
+  try{d=raw?JSON.parse(raw):null}catch(e){d=null}
+  if(!d)d={solved:{},attempts:[],queue:[],xp:0,badges:[],last:-1,created:Date.now()};
+  if(!d.queue)d.queue=[];if(!d.attempts)d.attempts=[];if(!d.badges)d.badges=[];if(!d.solved)d.solved={};
+  if(d.timeMs==null)d.timeMs=0;if(d.checkins==null)d.checkins=0;
+  d.queue.forEach(function(e){if(!e.eid)e.eid=id+'-'+uid();if(!e.type)e.type=e.baiTap?'attempt':'progress'});
+  return d;
+}
+function save(){if(user&&S)store.set(skey(user.id),JSON.stringify(S))}
+
+/* ================= điểm số ================= */
+// Mỗi bài: đúng ngay lần đầu không gợi ý = 1 điểm; đúng lần đầu có gợi ý = 0.75; đúng sau khi thử lại = 0.5; xem đáp án = 0.
+function itemPts(r){if(!r||!r.done||r.revealed)return 0;if(r.first)return 1;if(r.tries===1)return .75;return .5}
+function stats(){
+  var o={done:0,first:0,retry:0,rv:0,total:ALL_IDS.length},pts=0;
+  ALL_IDS.forEach(function(id){
+    var r=S.solved[id];
+    if(r&&r.done){o.done++;if(r.revealed)o.rv++;else if(r.first)o.first++;else o.retry++}
+    pts+=itemPts(r);
+  });
+  o.todo=o.total-o.done;
+  o.score=o.total?Math.round(pts/o.total*100)/10:0;
+  o.pct=o.total?Math.round(o.done/o.total*100):0;
+  return o;
+}
+function stageProg(i){var ids=IDS_OF[i];var d=ids.filter(function(x){return S.solved[x]&&S.solved[x].done}).length;return {d:d,n:ids.length}}
+function nextStage(){for(var i=0;i<STAGES.length;i++){var p=stageProg(i);if(p.n&&p.d<p.n)return i}return STAGES.length-1}
+function fmtTime(ms){var s=Math.floor(ms/1000),hh=Math.floor(s/3600),mm=Math.floor(s%3600/60);return hh?hh+':'+pad(mm)+':'+pad(s%60):pad(mm)+':'+pad(s%60)}
+function fmtClock(ts){var d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes())}
+function fmtDateTime(ts){var d=new Date(ts);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
+function ago(ts){var s=(Date.now()-ts)/1000;if(s<60)return 'vừa xong';if(s<3600)return Math.floor(s/60)+' phút trước';if(s<86400)return Math.floor(s/3600)+' giờ trước';var d=new Date(ts);return d.getDate()+'/'+(d.getMonth()+1)}
+function firstName(){return user?user.name.split(/\s+/).slice(-1)[0]:''}
+function initial(){var f=firstName();return f?f.charAt(0).toUpperCase():'?'}
+function greet(){var hr=new Date().getHours();return hr<11?'Chào buổi sáng':hr<13?'Chào buổi trưa':hr<18?'Chào buổi chiều':'Chào buổi tối'}
+
+/* ================= Google Sheet ================= */
+var SY={busy:false,err:false,last:0,timer:null};
+function sheetUrl(){return String(CONFIG.SHEET_URL||store.get('ktt.sheet')||'').trim()}
+function validUrl(u){return /^https:\/\/script\.google(usercontent)?\.com\/\S+$/.test(u)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function baseEv(type){return {type:type,eid:user.id+'-'+uid(),ts:Date.now(),ten:user.name,mssv:user.id,lop:user.lop||''}}
+function enqueue(ev){
+  if(ev.type==='progress')S.queue=S.queue.filter(function(e){return e.type!=='progress'});
+  S.queue.push(ev);
+  if(S.queue.length>2000)S.queue=S.queue.slice(-2000);
+  save();scheduleFlush();syncUI();
+}
+function scheduleFlush(ms){clearTimeout(SY.timer);SY.timer=setTimeout(flush,ms==null?2500:ms)}
+function progressEv(){
+  var st=stats(),ev=baseEv('progress');
+  ev.diem=st.score;ev.xp=S.xp;ev.hoanThanh=st.done;ev.tongBai=st.total;ev.phanTram=st.pct;ev.dungNgay=st.first;ev.xemDapAn=st.rv;
+  ev.thoiGianPhut=Math.round(S.timeMs/60000);
+  ev.changHienTai=S.last>=0&&STAGES[S.last]?'Chặng '+S.last+' · '+STAGES[S.last].tab:'Tổng quan';
+  ev.chang={};
+  STAGES.forEach(function(s,i){var p=stageProg(i);if(p.n)ev.chang['Chặng '+i+' · '+s.tab]=p.d+'/'+p.n});
+  ev.huyHieu=S.badges.map(badgeName).join(', ');
+  return ev;
+}
+var progT=null;
+function queueProgress(delay){clearTimeout(progT);progT=setTimeout(function(){if(S&&user)enqueue(progressEv())},delay==null?1200:delay)}
+function flush(){
+  var url=sheetUrl();
+  if(!url||!S||!user||!S.queue.length||SY.busy)return;
+  if(navigator.onLine===false){SY.err=true;syncUI();return}
+  SY.busy=true;syncUI();
+  var batch=S.queue.slice(0,40),owner=user.id,body=JSON.stringify({v:2,events:batch});
+  function done(ok){
+    SY.busy=false;
+    if(ok){
+      var ids={};batch.forEach(function(e){if(e.eid)ids[e.eid]=1});
+      var tgt=(user&&user.id===owner)?S:loadState(owner);
+      tgt.queue=tgt.queue.filter(function(e){return e.eid&&!ids[e.eid]});
+      store.set(skey(owner),JSON.stringify(tgt));
+      SY.err=false;SY.last=Date.now();
+      if(S&&S.queue.length)scheduleFlush(500);
+    }else SY.err=true;
+    syncUI();
+  }
+  try{
+    fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+      .then(function(r){return r.json().then(function(j){done(!!(j&&j.ok))},function(){done(r.ok)})})
+      .catch(function(){
+        return fetch(url,{method:'POST',mode:'no-cors',keepalive:body.length<60000,headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+          .then(function(){done(true)},function(){done(false)});
+      });
+  }catch(e){done(false)}
+}
+function testConn(out){
+  var url=sheetUrl();
+  if(!url){out.textContent='Chưa có URL Google Sheet.';return}
+  out.textContent='Đang kiểm tra kết nối…';
+  fetch(url+(url.indexOf('?')<0?'?':'&')+'action=ping&t='+Date.now())
+    .then(function(r){return r.json()})
+    .then(function(j){
+      if(j&&j.ok){out.textContent='✓ Kết nối tốt với "'+(j.sheet||'Google Sheet')+'".';SY.err=false;flush()}
+      else out.textContent='Máy chủ phản hồi nhưng không đúng định dạng. Kiểm tra lại mã Apps Script.';
+      syncUI();
+    })
+    .catch(function(){out.textContent='✗ Không kết nối được. Kiểm tra URL và quyền truy cập "Bất kỳ ai".'});
+}
+function syncState(){if(!sheetUrl())return 'off';if(SY.err)return 'err';if(S&&S.queue.length)return 'wait';return 'ok'}
+function syncLine(){
+  var st=syncState(),n=S?S.queue.length:0;
+  if(st==='off')return 'Giảng viên chưa cấu hình Google Sheet. Bạn vẫn có thể tải file CSV để nhập vào Google Sheets.';
+  if(st==='err')return 'Chưa gửi được (mất mạng hoặc sai URL). Trang sẽ tự gửi lại, còn '+n+' bản ghi đang chờ.';
+  if(st==='wait')return SY.busy?'Đang gửi '+n+' bản ghi lên Google Sheet…':'Còn '+n+' bản ghi đang chờ gửi lên Google Sheet.';
+  return 'Điểm danh, tiến độ và từng câu trả lời đã được ghi vào Google Sheet'+(SY.last?' lúc '+fmtClock(SY.last):'')+'.';
+}
+function syncUI(){
+  var el=$('#sync');if(!el)return;
+  var st=syncState(),n=S?S.queue.length:0;
+  el.className='pill sync '+st;
+  $('#syncTx').textContent={off:'Chưa nối Sheet',err:'Mất kết nối',wait:SY.busy?'Đang gửi…':'Chờ gửi · '+n,ok:'Đã đồng bộ'}[st];
+  ['#syncLn','#bnTx','#sumSync'].forEach(function(s){var e=$(s);if(e)e.textContent=syncLine()});
+}
+
+/* ================= xuất kết quả ================= */
+function csvCell(v){
+  v=v==null?'':String(v);
+  if(/^[=+\-@]/.test(v))v="'"+v;
+  return /[",\n\r;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+}
+function downloadCSV(){
+  var st=stats();
+  var rows=[['Thời gian','MSSV','Họ tên','Lớp','Chặng','Mã bài','Tên bài','Kết quả','Lần thử','Gợi ý','Tự tin','Trả lời']];
+  S.attempts.forEach(function(e){rows.push([fmtDateTime(e.ts),e.mssv,e.ten,e.lop||user.lop||'',e.chang,e.baiTap,e.tenBai||TITLE_OF[e.baiTap]||'',e.ketQua,e.lanThu,e.goiY,e.tuTin,e.traLoi])});
+  rows.push([],['TỔNG KẾT'],['Họ tên',user.name],['MSSV',user.id],['Lớp',user.lop||''],['Điểm /10',st.score],['Hoàn thành',st.done+'/'+st.total],['Đúng ngay lần đầu',st.first],['Xem đáp án',st.rv],['XP',S.xp],['Thời gian học (phút)',Math.round(S.timeMs/60000)],['Xuất lúc',fmtDateTime(Date.now())]);
+  var csv='\ufeff'+rows.map(function(r){return r.map(csvCell).join(',')}).join('\r\n');
+  var url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  var a=h('a',{href:url,download:'KeThua_'+user.id+'.csv'});document.body.append(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);a.remove()},800);
+  toast('Đã tải CSV. Mở Google Sheets › Tệp › Nhập để xem.');
+}
+
+/* ================= ghi nhận lượt làm bài ================= */
+function recOf(id){return S.solved[id]||(S.solved[id]={tries:0,done:false,ok:false,first:false,revealed:false,hints:0})}
+function stageOf(id){return IDS_OF.findIndex(function(a){return a.indexOf(id)>=0})}
+function logEv(ev){S.attempts.push(ev);if(S.attempts.length>1500)S.attempts=S.attempts.slice(-1500);enqueue(ev)}
+function attempt(id,d){
+  var r=recOf(id);r.tries++;if(d.hints>r.hints)r.hints=d.hints;
+  var ev=baseEv('attempt');
+  ev.chang=stageOf(id);ev.baiTap=id;ev.tenBai=TITLE_OF[id]||id;ev.ketQua=d.ok?'đúng':'sai';ev.lanThu=r.tries;ev.goiY=d.hints||0;ev.tuTin=d.conf||'';ev.traLoi=String(d.ans==null?'':d.ans).slice(0,300);
+  if(d.ok&&!r.done){
+    r.done=true;r.ok=true;r.first=(r.tries===1&&!d.hints);r.at=Date.now();
+    var gain=r.tries===1?(d.hints?7:10):5;S.xp+=gain;toast('+'+gain+' XP 🎉');
+  }
+  logEv(ev);afterChange();
+}
+function reveal(id,hints){
+  var r=recOf(id);
+  if(!r.done){
+    r.done=true;r.revealed=true;r.at=Date.now();
+    var ev=baseEv('attempt');
+    ev.chang=stageOf(id);ev.baiTap=id;ev.tenBai=TITLE_OF[id]||id;ev.ketQua='xem đáp án';ev.lanThu=r.tries;ev.goiY=hints||0;ev.tuTin='';ev.traLoi='';
+    logEv(ev);
+  }
+  afterChange();
+}
+var BADGES=[
+  {id:'first',em:'🎯',name:'Bài đầu tiên',desc:'Làm đúng bài đầu tiên',test:function(){return Object.keys(S.solved).some(function(k){return S.solved[k].ok})}},
+  {id:'super',em:'🧱',name:'Bậc thầy super',desc:'Đúng toàn bộ chặng 2',test:function(){return IDS_OF[2].every(function(i){return S.solved[i]&&S.solved[i].ok})}},
+  {id:'bug',em:'🐞',name:'Thợ săn bug',desc:'Xong cả 2 bài săn lỗi',test:function(){return ['s3-bug','boss-bug'].every(function(i){return S.solved[i]&&S.solved[i].ok})}},
+  {id:'boss',em:'👑',name:'Hạ gục Boss',desc:'Boss trong ≤ 3 lần thử',test:function(){var r=S.solved['boss-bug'];return !!(r&&r.ok&&r.tries<=3)}}
+];
+function badgeName(id){var b=BADGES.filter(function(x){return x.id===id})[0];return b?b.name:id}
+function afterChange(){
+  BADGES.forEach(function(b){if(S.badges.indexOf(b.id)<0&&b.test()){S.badges.push(b.id);setTimeout(function(){toast(b.em+' Huy hiệu mới: '+b.name)},900)}});
+  save();queueProgress();chrome();chips();
+}
+
+/* ================= giao diện chung ================= */
+var toastT=null;
+function toast(t){
+  var e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){e.hidden=true},2600);
+}
+function navBtn(i,icn,label){
+  return h('button',{class:'nv',type:'button','data-i':String(i),onclick:function(){go(i);closeNav()}},icon(icn),h('span',{class:'nt'},label),h('span',{class:'pr'}));
+}
+function ringBg(p){var pc=p.n?Math.round(p.d/p.n*100):0;return 'background:conic-gradient(var(--accent) '+pc+'%,var(--surface2) 0)'}
+function chrome(){
+  if(!S)return;
+  var nav=$('#nav');
+  if(!nav.children.length){
+    nav.append(navBtn(-1,'home','Tổng quan'));
+    STAGES.forEach(function(st,i){nav.append(navBtn(i,STAGE_IC[i]||'layers',st.tab))});
+  }
+  Array.prototype.forEach.call(nav.children,function(b){
+    var i=+b.getAttribute('data-i');
+    b.setAttribute('aria-current',i===cur?'page':'false');
+    if(i>=0){var p=stageProg(i);b.classList.toggle('done',p.n>0&&p.d===p.n);b.querySelector('.pr').textContent=p.n?p.d+'/'+p.n:''}
+  });
+  var s=stats();
+  $('#pct').textContent=s.pct+'%';$('#bar').style.width=s.pct+'%';$('#xp').textContent=S.xp;
+  $('#pfAv').textContent=initial();$('#pfHi').textContent='Chào, '+firstName()+'! 👋';$('#pfId').textContent=user.id+(user.lop?' · '+user.lop:'');
+  $('#usr').textContent=initial();
+  var boss=S.solved['boss-bug'],bossDone=!!(boss&&boss.done);
+  if(bossDone||cur===6){$('#prT').textContent='Tổng kết';$('#prP').textContent='Xem điểm, huy hiệu và gửi báo cáo cho giảng viên.';$('#prB').textContent='Xem ngay';$('#prB').onclick=function(){go(7);closeNav()}}
+  else{$('#prT').textContent='Boss cuối';$('#prP').textContent='Tìm 6 lỗi ẩn trong hệ thống tính lương!';$('#prB').textContent='Thử thách';$('#prB').onclick=function(){go(6);closeNav()}}
+  var rg=$('#ring');
+  if(rg&&cur>=0){var p=stageProg(cur);rg.setAttribute('style',ringBg(p));rg.querySelector('span').innerHTML=Math.round(p.d/p.n*100)+'%<small>'+p.d+'/'+p.n+' bài</small>'}
+  syncUI();
+}
+var chipReg=[];
+function chips(){
+  chipReg.forEach(function(c){
+    var rs=c.ids.map(function(i){return S.solved[i]||{}});
+    var all=rs.every(function(r){return r.done}),rv=rs.some(function(r){return r.revealed});
+    c.el.className='st'+(all?(rv?' rv':' ok'):'');
+    c.el.textContent=all?(rv?'Đã xem đáp án':'✓ Hoàn thành'):(rs.some(function(r){return r.done})?'Đang làm':'Chưa làm');
+  });
+}
+function exCard(tag,ids,title){
+  var st=h('span',{class:'st'});chipReg.push({el:st,ids:ids});
+  var c=h('section',{class:'ex','aria-label':title||tag},h('div',{class:'exh'},h('span',{class:'tag'},title?tag+' · '+title:tag),st));
+  return c;
+}
+function hintUI(hints){
+  var box=h('div',{class:'hints'}),n=0;
+  var btn=h('button',{class:'btn ghost sm',type:'button'},'Gợi ý');
+  function lab(){btn.textContent='💡 Gợi ý ('+(hints.length-n)+')'}
+  lab();
+  btn.addEventListener('click',function(){
+    if(n>=hints.length)return;
+    box.append(h('div',{class:'hint',html:fmt(hints[n])}));n++;lab();
+    if(n>=hints.length)btn.disabled=true;
+  });
+  return {btn:hints&&hints.length?btn:null,box:box,count:function(){return n}};
+}
+
+
+/* ================= các khối nội dung ================= */
+var B={};
+B.md=function(b){return h('div',{class:'txt',html:b.html})};
+B.html=function(b){return h('div',{html:b.html})};
+B.code=function(b){return codeEl(b.code,{mark:b.mark}).el};
+B.tree=function(){
+  var s='<svg class="tree" viewBox="0 0 640 250" role="img" aria-label="Cây kế thừa: Object ở trên cùng, NhanVien bên dưới, ba lớp con NhanVienVanPhong, QuanLy, NhanVienBanHang ở dưới cùng"><title>Cây kế thừa</title>'
+  +'<path class="ln" d="M320 130 V158 M320 158 H120 V174 M320 158 H520 V174 M320 130 V174"/>'
+  +'<path class="ln" d="M320 50 V70"/>'
+  +'<polygon class="ar" points="320,50 312,62 328,62"/><polygon class="ar" points="320,130 312,142 328,142"/>'
+  +'<polygon class="ar" points="120,174 112,162 128,162" transform="translate(0,0)"/><polygon class="ar" points="320,174 312,162 328,162"/><polygon class="ar" points="520,174 512,162 528,162"/>'
+  +'<rect class="nd" x="250" y="10" width="140" height="40" rx="8"/><text x="320" y="30">Object</text>'
+  +'<rect class="nd hot" x="240" y="90" width="160" height="40" rx="8"/><text x="320" y="110">NhanVien</text>'
+  +'<rect class="nd" x="20" y="190" width="200" height="40" rx="8"/><text x="120" y="210">NhanVienVanPhong</text>'
+  +'<rect class="nd" x="240" y="190" width="160" height="40" rx="8"/><text x="320" y="210">QuanLy</text>'
+  +'<rect class="nd" x="420" y="190" width="200" height="40" rx="8"/><text x="520" y="210">NhanVienBanHang</text>'
+  +'</svg>';
+  return h('div',null,h('div',{html:s}),h('p',{class:'cap'},'Mũi tên chỉ từ lớp con lên lớp cha. Ví dụ: ',h('code',null,'QuanLy extends NhanVien'),'.'));
+};
+
+B.quiz=function(b){
+  var conf=null,tries=0,locked=false;
+  var card=exCard(b.tag||'Câu hỏi',[b.id]);
+  var hu=hintUI(b.hints||[]);
+  card.append(h('div',{class:'q',html:fmt(b.q)}));
+  if(b.code)card.append(codeEl(b.code).el);
+  var confRow=h('div',{class:'conf'},'Độ tự tin của bạn:');
+  [['chắc chắn','Chắc chắn'],['hơi chắc','Hơi chắc'],['đoán','Đoán']].forEach(function(c){
+    var cb=h('button',{class:'cf',type:'button','aria-pressed':'false'},c[1]);
+    cb.addEventListener('click',function(){
+      if(locked)return;conf=c[0];
+      confRow.querySelectorAll('.cf').forEach(function(x){x.setAttribute('aria-pressed',x===cb?'true':'false')});
+    });
+    confRow.append(cb);
+  });
+  var opts=h('div',{class:'opts'}),fb=h('div',{class:'fb','aria-live':'polite'});
+  var btns=b.options.map(function(o,i){
+    o=typeof o==='string'?{t:o}:o;
+    var btn=h('button',{class:'opt',type:'button'},h('span',{class:'lt'},String.fromCharCode(65+i)),h('span',{class:'tx'},o.mono?h('pre',null,o.t):h('span',{html:fmt(o.t)})));
+    btn.addEventListener('click',function(){
+      if(locked)return;tries++;
+      var ok=b.correct==null||i===b.correct;
+      attempt(b.id,{ok:ok,ans:String.fromCharCode(65+i),conf:conf,hints:hu.count()});
+      if(ok){btn.classList.add('good');locked=true;fb.className='fb ok';fb.innerHTML='<strong>Đúng.</strong> <span class="ex-t">'+fmt(b.explain)+'</span>';}
+      else{
+        btn.classList.add('bad');btn.disabled=true;
+        if(tries>=2){
+          locked=true;btns[b.correct].classList.add('good');reveal(b.id,hu.count());
+          fb.className='fb bad';fb.innerHTML='<strong>Đáp án là '+String.fromCharCode(65+b.correct)+'.</strong> <span class="ex-t">'+fmt(b.explain)+'</span>';
+        }else{fb.className='fb bad';fb.textContent='Chưa đúng, thử lại nhé.'}
+      }
+      if(locked)btns.forEach(function(x){x.disabled=true});
+    });
+    opts.append(btn);return btn;
+  });
+  card.append(confRow,opts,hu.box,fb,hu.btn?h('div',{class:'row'},hu.btn):null);
+  return card;
+};
+
+B.triage=function(b){
+  var card=exCard('Phân loại',b.items.map(function(_,i){return b.id+'.'+i}),b.title);
+  b.items.forEach(function(it,idx){
+    var id=b.id+'.'+idx,tries=0,locked=false;
+    var fb=h('div',{class:'fb','aria-live':'polite'});
+    var row=h('div',{class:'row'});
+    var cbs={};
+    b.choices.forEach(function(c){
+      var cb=h('button',{class:'ch',type:'button'},c.label);cbs[c.id]=cb;
+      cb.addEventListener('click',function(){
+        if(locked)return;tries++;
+        var ok=c.id===it.answer;
+        attempt(id,{ok:ok,ans:c.id});
+        if(ok){cb.classList.add('good');locked=true;fb.className='fb ok';fb.innerHTML='<strong>Đúng.</strong> <span class="ex-t">'+fmt(it.why)+'</span>';}
+        else{
+          cb.classList.add('bad');cb.disabled=true;
+          if(tries>=2){locked=true;cbs[it.answer].classList.add('good');reveal(id);fb.className='fb bad';fb.innerHTML='<strong>Đáp án: '+esc(b.choices.filter(function(x){return x.id===it.answer})[0].label)+'.</strong> <span class="ex-t">'+fmt(it.why)+'</span>';}
+          else{fb.className='fb bad';fb.textContent='Chưa đúng, thử lại nhé.'}
+        }
+        if(locked)Object.keys(cbs).forEach(function(k){cbs[k].disabled=true});
+      });
+      row.append(cb);
+    });
+    card.append(h('div',{class:'tri'},it.text?h('div',{class:'q',html:fmt(it.text)}):null,it.code?codeEl(it.code).el:null,row,fb));
+  });
+  return card;
+};
+
+B.bug=function(b){
+  var sel={},checks=0,locked=false;
+  var hu=hintUI(b.hints||[]);
+  var card=exCard('Săn lỗi',[b.id]);
+  card.append(h('div',{class:'q',html:fmt(b.intro)}));
+  var c=codeEl(b.code,{interactive:true});
+  var allBug={};b.bugs.forEach(function(g){g.lines.forEach(function(l){allBug[l]=1})});
+  c.rows.forEach(function(row,i){
+    row.addEventListener('click',function(){
+      if(locked)return;var n=i+1;
+      row.classList.remove('hit','fp','miss');
+      if(sel[n]){delete sel[n];row.classList.remove('sel');row.setAttribute('aria-pressed','false')}
+      else{sel[n]=1;row.classList.add('sel');row.setAttribute('aria-pressed','true')}
+    });
+  });
+  var out=h('div',{class:'fb','aria-live':'polite'}),list=h('ul',{class:'bugl'}),acts=h('div',{class:'row'});
+  var chk=h('button',{class:'btn',type:'button'},'Kiểm tra');
+  var rv=h('button',{class:'btn ghost',type:'button',hidden:true},'Xem đáp án');
+  function showAll(){
+    list.innerHTML='';
+    b.bugs.forEach(function(g){
+      var found=g.lines.some(function(l){return sel[l]});
+      list.append(h('li',{class:found?'':'m',html:'<strong>Dòng '+g.lines.join(' hoặc ')+':</strong> '+fmt(g.why)}));
+      g.lines.forEach(function(l){var r=c.rows[l-1];if(!found&&!r.classList.contains('fp'))r.classList.add('miss')});
+    });
+  }
+  chk.addEventListener('click',function(){
+    if(locked)return;checks++;
+    var found=b.bugs.filter(function(g){return g.lines.some(function(l){return sel[l]})});
+    var fp=Object.keys(sel).map(Number).filter(function(l){return !allBug[l]});
+    c.rows.forEach(function(r,i){var n=i+1;r.classList.remove('hit','fp');if(sel[n]){r.classList.remove('sel');r.classList.add(allBug[n]?'hit':'fp')}});
+    var ok=found.length===b.bugs.length&&fp.length===0;
+    attempt(b.id,{ok:ok,ans:Object.keys(sel).join(','),hints:hu.count()});
+    list.innerHTML='';
+    found.forEach(function(g){list.append(h('li',{html:'<strong>Dòng '+g.lines.join(' hoặc ')+':</strong> '+fmt(g.why)}))});
+    if(ok){locked=true;out.className='fb ok';out.innerHTML='<strong>Tìm đủ '+b.bugs.length+'/'+b.bugs.length+' lỗi.</strong>';chk.disabled=true;rv.hidden=true;}
+    else{
+      out.className='fb bad';
+      out.textContent='Tìm đúng '+found.length+'/'+b.bugs.length+' lỗi'+(fp.length?', chọn nhầm '+fp.length+' dòng không có lỗi (đỏ)':'')+(found.length<b.bugs.length?'. Còn thiếu '+(b.bugs.length-found.length)+' lỗi.':'.');
+      if(checks>=3)rv.hidden=false;
+    }
+  });
+  rv.addEventListener('click',function(){
+    locked=true;reveal(b.id,hu.count());showAll();chk.disabled=true;rv.hidden=true;
+    out.className='fb bad';out.textContent='Đây là các lỗi (vàng là lỗi bạn bỏ sót).';
+  });
+  acts.append(chk,rv,hu.btn);
+  card.append(c.el,acts,hu.box,out,list);
+  return card;
+};
+
+B.fill=function(b){
+  var tries=0,locked=false;
+  var hu=hintUI(b.hints||[]);
+  var card=exCard('Điền chỗ trống',[b.id]);
+  card.append(h('div',{class:'q',html:fmt(b.intro)}));
+  var inputs={};
+  var inner=h('div',{class:'code-in'});
+  b.code.split('\n').forEach(function(line,i){
+    var row=h('div',{class:'cl'});row.append(h('span',{class:'no'},String(i+1)));
+    var tx=h('span',{class:'tx'});
+    var parts=line.split(/\{\{(\w+)\}\}/);
+    parts.forEach(function(p,j){
+      if(j%2===0){tx.append(h('span',{html:hlLine(p)}))}
+      else{var inp=h('input',{type:'text',class:'bl',id:b.id+'-'+p,autocomplete:'off',autocapitalize:'off',spellcheck:'false','aria-label':'Chỗ trống '+p,size:b.blanks[p].w||8});inputs[p]=inp;tx.append(inp)}
+    });
+    row.append(tx);inner.append(row);
+  });
+  card.append(h('div',{class:'code'},inner));
+  var fb=h('div',{class:'fb','aria-live':'polite'}),acts=h('div',{class:'row'});
+  var chk=h('button',{class:'btn',type:'button'},'Kiểm tra');
+  var rv=h('button',{class:'btn ghost',type:'button',hidden:true},'Xem đáp án');
+  chk.addEventListener('click',function(){
+    if(locked)return;tries++;
+    var allOk=true,ans=[];
+    Object.keys(inputs).forEach(function(k){
+      var v=inputs[k].value.trim().replace(/\s+/g,' ');ans.push(k+'='+v);
+      var ok=new RegExp(b.blanks[k].re).test(v);
+      inputs[k].classList.remove('ok','bad');inputs[k].classList.add(ok?'ok':'bad');if(!ok)allOk=false;
+    });
+    attempt(b.id,{ok:allOk,ans:ans.join(';'),hints:hu.count()});
+    if(allOk){locked=true;chk.disabled=true;rv.hidden=true;fb.className='fb ok';fb.innerHTML='<strong>Đúng.</strong> <span class="ex-t">'+fmt(b.explain)+'</span>'}
+    else{fb.className='fb bad';fb.textContent='Có chỗ chưa đúng (viền đỏ). Thử lại nhé.';if(tries>=3)rv.hidden=false}
+  });
+  rv.addEventListener('click',function(){
+    locked=true;reveal(b.id,hu.count());chk.disabled=true;rv.hidden=true;
+    var ans={a:'super',b:'this'};
+    Object.keys(inputs).forEach(function(k){inputs[k].value=ans[k]||'';inputs[k].classList.remove('bad');inputs[k].classList.add('ok')});
+    fb.className='fb bad';fb.innerHTML='<strong>Đáp án đã được điền.</strong> <span class="ex-t">'+fmt(b.explain)+'</span>';
+  });
+  acts.append(chk,rv,hu.btn);
+  card.append(acts,hu.box,fb);
+  return card;
+};
+
+B.parsons=function(b){
+  var n=b.lines.length,tries=0,locked=false;
+  var rnd=seeded(b.id),order=b.lines.map(function(_,i){return i});
+  for(var i=n-1;i>0;i--){var j=Math.floor(rnd()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}
+  if(order.every(function(v,i){return v===i})){var t2=order[0];order[0]=order[1];order[1]=t2}
+  var hu=hintUI(b.hints||[]);
+  var card=exCard('Sắp xếp code',[b.id]);
+  card.append(h('div',{class:'q',html:fmt(b.intro)}));
+  var list=h('div',{class:'pls'}),fb=h('div',{class:'fb','aria-live':'polite'});
+  function draw(marks){
+    list.innerHTML='';
+    order.forEach(function(li,pos){
+      var up=h('button',{type:'button','aria-label':'Chuyển lên',disabled:locked||pos===0},'↑');
+      var dn=h('button',{type:'button','aria-label':'Chuyển xuống',disabled:locked||pos===n-1},'↓');
+      up.addEventListener('click',function(){var x=order[pos];order[pos]=order[pos-1];order[pos-1]=x;draw()});
+      dn.addEventListener('click',function(){var x=order[pos];order[pos]=order[pos+1];order[pos+1]=x;draw()});
+      var cls='pl'+(marks?(li===pos?' good':' bad'):'');
+      var txt=locked?b.lines[li]:b.lines[li].trim();
+      list.append(h('div',{class:cls},h('span',{class:'tx',html:hlLine(txt)}),locked?null:h('span',{class:'mv'},up,dn)));
+    });
+  }
+  draw();
+  var acts=h('div',{class:'row'});
+  var chk=h('button',{class:'btn',type:'button'},'Kiểm tra');
+  var rv=h('button',{class:'btn ghost',type:'button',hidden:true},'Xem đáp án');
+  chk.addEventListener('click',function(){
+    if(locked)return;tries++;
+    var good=order.filter(function(li,pos){return li===pos}).length,ok=good===n;
+    attempt(b.id,{ok:ok,ans:order.join(','),hints:hu.count()});
+    if(ok){locked=true;chk.disabled=true;rv.hidden=true;draw(true);fb.className='fb ok';fb.innerHTML='<strong>Đúng.</strong> <span class="ex-t">'+fmt(b.explain)+'</span>'}
+    else{draw(true);fb.className='fb bad';fb.textContent=good+'/'+n+' dòng đã đúng vị trí (xanh). Sắp xếp lại các dòng đỏ.';if(tries>=3)rv.hidden=false}
+  });
+  rv.addEventListener('click',function(){
+    locked=true;reveal(b.id,hu.count());order=b.lines.map(function(_,i){return i});draw(true);chk.disabled=true;rv.hidden=true;
+    fb.className='fb bad';fb.innerHTML='<strong>Thứ tự đúng đã được xếp sẵn.</strong> <span class="ex-t">'+fmt(b.explain)+'</span>';
+  });
+  acts.append(chk,rv,hu.btn);
+  card.append(list,acts,hu.box,fb);
+  return card;
+};
+
+B.trace=function(b){
+  var i=0,timer=null,steps=b.steps;
+  var card=h('section',{class:'ex','aria-label':b.title},h('div',{class:'exh'},h('span',{class:'tag'},'Chạy từng bước · '+b.title)));
+  var c=codeEl(b.code);
+  var right=h('div');
+  var note=h('div',{class:'stepnote','aria-live':'polite'});
+  var cnt=h('span',{class:'cnt'});
+  var back=h('button',{class:'btn ghost sm',type:'button'},'← Lùi');
+  var next=h('button',{class:'btn sm',type:'button'},'Bước tiếp →');
+  var play=h('button',{class:'btn ghost sm',type:'button'},'Tự chạy');
+  var reset=h('button',{class:'btn ghost sm',type:'button'},'Làm lại');
+  function stop(){if(timer){clearInterval(timer);timer=null;play.textContent='Tự chạy'}}
+  function render(){
+    var s=steps[i];
+    c.rows.forEach(function(r,k){r.classList.remove('cur','err');if(k+1===s.l)r.classList.add(s.err?'err':'cur')});
+    right.innerHTML='';
+    if(s.v){
+      var t=h('table',{class:'vt'},h('thead',null,h('tr',null,h('th',null,'Biến'),h('th',null,'Kiểu khai báo'),h('th',null,'Kiểu thật'))),h('tbody',null,s.v.map(function(r){return h('tr',null,r.map(function(x){return h('td',null,x)}))})));
+      right.append(h('div',{class:'pn'},h('h4',null,'Biến'),t));
+    }
+    if(s.st)right.append(h('div',{class:'pn'},h('h4',null,'Call stack'),h('div',{class:'stk'},s.st.slice().reverse().map(function(f,k){return h('div',{class:'fr'+(k===0?' top':'')},f)}))));
+    if(s.ly)right.append(h('div',{class:'pn'},h('h4',null,'Đối tượng trong bộ nhớ'),h('div',{class:'lys'},s.ly.map(function(l){
+      var lab={wait:'chưa khởi tạo',run:'đang chạy',done:'xong',fail:'lỗi'}[l.s];
+      return h('div',{class:'ly '+l.s},h('b',null,l.n),' · '+lab,l.f.map(function(f){return h('span',{class:'fd'},f[0]+' = '+f[1],f[2]?h('span',{class:'pv'},'private'):null)}));
+    }))));
+    var con=h('div',{class:'con'});
+    var any=false;
+    for(var k=0;k<=i;k++){
+      if(steps[k].out){con.append(h('div',null,steps[k].out));any=true}
+      if(steps[k].err&&(k===i||!steps[k+1]||!steps[k+1].err||k===i)&&k===i){con.append(h('div',{class:'e'},'Exception in thread "main" java.lang.'+steps[k].err));any=true}
+    }
+    if(!any)con.append(h('i',null,'(chưa in gì)'));
+    right.append(h('div',{class:'pn'},h('h4',null,'Console'),con));
+    note.innerHTML=fmt(s.note);
+    cnt.textContent='Bước '+(i+1)+'/'+steps.length;
+    back.disabled=i===0;next.disabled=i===steps.length-1;
+    if(i===steps.length-1)stop();
+  }
+  back.addEventListener('click',function(){stop();if(i>0){i--;render()}});
+  next.addEventListener('click',function(){stop();if(i<steps.length-1){i++;render()}});
+  reset.addEventListener('click',function(){stop();i=0;render()});
+  play.addEventListener('click',function(){
+    if(timer){stop();return}
+    if(i>=steps.length-1)i=0;render();
+    play.textContent='Dừng';
+    timer=setInterval(function(){if(i<steps.length-1){i++;render()}else stop()},1700);
+  });
+  card.append(h('div',{class:'tr'},c.el,right),note,h('div',{class:'row'},back,next,play,reset,cnt));
+  render();
+  return card;
+};
+
+B.castlab=function(){
+  var actual='QuanLy',act='call';
+  var card=h('section',{class:'ex','aria-label':'Phòng thí nghiệm ép kiểu'},h('div',{class:'exh'},h('span',{class:'tag'},'Phòng thí nghiệm · kiểu khai báo và kiểu thật')));
+  var res=h('div',{class:'res'}),codeBox=h('div');
+  var ACTS=[
+    {id:'call',code:'nv.tinhLuong();',label:'nv.tinhLuong()'},
+    {id:'set',code:'nv.setPhuCap(1_000_000);',label:'nv.setPhuCap(...)'},
+    {id:'cast',code:'QuanLy ql = (QuanLy) nv;',label:'(QuanLy) nv'},
+    {id:'inst',code:'boolean b = nv instanceof QuanLy;',label:'nv instanceof QuanLy'}
+  ];
+  var CALL={NhanVien:'Chạy `NhanVien.tinhLuong()`: trả về lương cơ bản.',QuanLy:'Chạy `QuanLy.tinhLuong()`: lương cơ bản cộng phụ cấp.',NhanVienBanHang:'Chạy `NhanVienBanHang.tinhLuong()`: lương cơ bản cộng 5% doanh số.'};
+  var segA=h('div',{class:'seg'}),segB=h('div',{class:'seg'});
+  function mk(seg,items,get,set){
+    seg.innerHTML='';
+    items.forEach(function(it){
+      var bt=h('button',{class:'sg',type:'button','aria-pressed':String(get()===it.id)},it.label);
+      bt.addEventListener('click',function(){set(it.id);update()});seg.append(bt);
+    });
+  }
+  function update(){
+    mk(segA,['NhanVien','QuanLy','NhanVienBanHang'].map(function(x){return {id:x,label:'new '+x+'(...)'}}),function(){return actual},function(v){actual=v});
+    mk(segB,ACTS,function(){return act},function(v){act=v});
+    var a=ACTS.filter(function(x){return x.id===act})[0];
+    var code='NhanVien nv = new '+actual+'(...);\n'+a.code;
+    codeBox.innerHTML='';codeBox.append(codeEl(code).el);
+    var cls,title,body;
+    if(act==='call'){cls='ok';title='Chạy được';body=CALL[actual]+' Kiểu khai báo quyết định bạn được gọi gì, kiểu thật quyết định phiên bản nào chạy.'}
+    else if(act==='set'){cls='cerr';title='Lỗi biên dịch';body='Kiểu khai báo là `NhanVien`, và `NhanVien` không có `setPhuCap`. Điều này đúng dù đối tượng thật là gì.'}
+    else if(act==='cast'){
+      if(actual==='QuanLy'){cls='ok';title='Chạy được';body='Đối tượng thật là `QuanLy`, nên ép kiểu thành công.'}
+      else{cls='rerr';title='Lỗi lúc chạy: ClassCastException';body='Dòng này biên dịch được, nhưng đối tượng thật là `'+actual+'`, không phải `QuanLy`.'}
+    }else{cls='ok';title='Chạy được';body=actual==='QuanLy'?'Kết quả `true`: đối tượng thật là `QuanLy`.':'Kết quả `false`: đối tượng thật là `'+actual+'`. Dùng cách này để kiểm tra trước khi ép kiểu.'}
+    res.className='res '+cls;res.innerHTML='<strong>'+title+'</strong>'+fmt(body);
+  }
+  update();
+  card.append(h('div',{class:'lab'},h('div',null,h('h4',null,'Đối tượng thật'),segA),h('div',null,h('h4',null,'Thao tác'),segB),codeBox,res));
+  return card;
+};
+
+function sumText(){
+  var st=stats();
+  var lines=['BÁO CÁO BUỔI HỌC: Kế thừa trong Java','Họ tên: '+user.name,'MSSV: '+user.id];
+  if(user.lop)lines.push('Lớp: '+user.lop);
+  lines.push('Điểm: '+st.score+'/10 · XP: '+S.xp,'Hoàn thành: '+st.done+'/'+st.total+' bài ('+st.pct+'%) · Đúng ngay lần đầu: '+st.first+' · Xem đáp án: '+st.rv,'Thời gian học: '+Math.round(S.timeMs/60000)+' phút','');
+  ALL_IDS.forEach(function(id){
+    var r=S.solved[id];
+    var s=!r?'chưa làm':(r.revealed?'đã xem đáp án':'đúng (lần thử '+r.tries+(r.hints?', '+r.hints+' gợi ý':'')+')');
+    lines.push('- '+TITLE_OF[id]+' ['+id+']: '+s);
+  });
+  return lines.join('\n');
+}
+function copyText(text,note,msg){
+  var done=function(){toast(msg||'Đã sao chép báo cáo')};
+  var fallback=function(){
+    var ta=h('textarea',{class:'rp',readonly:true});ta.value=text;note.innerHTML='';note.append(h('p',{class:'cap'},'Không sao chép tự động được. Chọn toàn bộ nội dung dưới đây rồi sao chép:'),ta);ta.focus();ta.select();
+  };
+  try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
+}
+
+function statCard(cls,icn,label,val,unit,sub){
+  return h('div',{class:'stat '+cls},
+    h('div',{class:'ti'},icon(icn)),
+    h('div',{class:'lb'},label),
+    h('div',{class:'vl'},String(val),unit?h('small',null,' '+unit):null),
+    h('div',{class:'sb'},sub)
+  );
+}
+
+B.summary=function(){
+  var wrap=h('div',{class:'sec',style:'margin-top:0'});
+  var st=stats();
+  wrap.append(h('div',{class:'stats',style:'margin-top:0'},
+    statCard('c-purple','check','Bài đã làm',st.done,'/ '+st.total,st.pct+'% hoàn thành'),
+    statCard('c-pink','target','Điểm bài tập',st.score,'/ 10',st.first+' câu đúng ngay lần đầu'),
+    statCard('c-yellow','zap','Điểm kinh nghiệm',S.xp,'XP',S.badges.length+'/'+BADGES.length+' huy hiệu'),
+    statCard('c-blue','clock','Thời gian học',Math.max(1,Math.round(S.timeMs/60000)),'phút',S.checkins+' lần điểm danh')
+  ));
+  var topics=Object.keys(TOPIC_NAME);
+  var tcard=h('div',{class:'ex'},h('div',{class:'exh'},h('span',{class:'tag'},'Theo chủ đề')));
+  var weak=[];
+  topics.forEach(function(tp){
+    var ids=ALL_IDS.filter(function(i){return TOPIC_OF[i]===tp});
+    var f=ids.filter(function(i){return S.solved[i]&&S.solved[i].first}).length;
+    var dn=ids.filter(function(i){return S.solved[i]&&S.solved[i].done}).length;
+    if(dn<ids.length||f<ids.length)weak.push(tp);
+    tcard.append(h('div',{class:'tp'},h('span',null,TOPIC_NAME[tp]),h('div',{class:'bw'},h('i',{style:'width:'+(ids.length?Math.round(f/ids.length*100):0)+'%'})),h('span',{class:'v'},f+'/'+ids.length+' đúng ngay')));
+  });
+  wrap.append(tcard);
+  wrap.append(h('div',{class:'txt',html:weak.length?'<h2>Nên ôn lại</h2><ul>'+weak.map(function(t){return '<li><a href="#chang-'+TOPIC_STAGE[t]+'">'+esc(TOPIC_NAME[t])+' (chặng '+TOPIC_STAGE[t]+')</a></li>'}).join('')+'</ul>':'<h2>Làm rất tốt 🎉</h2><p>Bạn đã đúng ngay từ lần đầu ở mọi chủ đề.</p>'}));
+  wrap.append(h('div',{class:'txt'},h('h2',null,'Huy hiệu'),h('div',{class:'badges'},BADGES.map(function(bd){var on=S.badges.indexOf(bd.id)>=0;return h('div',{class:'bdg'+(on?'':' off')},h('span',{class:'em'},bd.em),bd.name,h('small',null,bd.desc))}))));
+  wrap.append(h('div',{class:'txt',html:'<h2>Những lỗi hay gặp nhất</h2><ol class="errs"><li>Lớp cha không có constructor không tham số mà lớp con không gọi <code>super(...)</code>.</li><li><code>super(...)</code> không nằm ở dòng đầu constructor.</li><li>Quên <code>super.</code> khi ghi đè và muốn dùng lại, gây đệ quy vô hạn.</li><li>Gõ sai tên hoặc sai tham số khi ghi đè. Luôn dùng <code>@Override</code>.</li><li>Hạ phạm vi truy cập khi ghi đè (<code>public</code> thành <code>protected</code>).</li><li>Downcast mà không kiểm tra <code>instanceof</code>.</li><li>Gọi phương thức có thể bị ghi đè bên trong constructor.</li></ol>'}));
+  var note=h('div'),scard=h('div',{class:'ex'});
+  scard.append(
+    h('div',{class:'exh'},h('span',{class:'tag'},'Google Sheet & Báo cáo')),
+    h('p',{class:'cap',id:'sumSync'},syncLine()),
+    h('div',{class:'row'},
+      sheetUrl()?h('button',{class:'btn',type:'button',onclick:function(){queueProgress(0);setTimeout(flush,50);toast('Đang đồng bộ lên Google Sheet…')}},icon('send'),'Đồng bộ ngay'):null,
+      h('button',{class:'btn'+(sheetUrl()?' ghost':''),type:'button',onclick:downloadCSV},icon('download'),'Xuất CSV (mở bằng Google Sheets)'),
+      h('button',{class:'btn ghost',type:'button',onclick:function(){copyText(sumText(),note)}},icon('copy'),'Sao chép báo cáo'),
+      h('button',{class:'btn ghost sm',type:'button',onclick:function(){openMenu(true)}},icon('sheet'),'Cài đặt URL Sheet')
+    ),
+    note
+  );
+  wrap.append(scard);
+  return wrap;
+};
+
+/* ================= trang Tổng quan (Dashboard) ================= */
+function renderDash(box){
+  var st=stats(),nx=nextStage(),nxSt=STAGES[nx],nxP=stageProg(nx);
+  var hero=h('section',{class:'hero'},
+    h('div',{class:'hero-tx'},
+      h('div',{class:'eyebrow'},CONFIG.SESSION+' · 8 chặng'),
+      h('h2',null,greet()+', '+firstName()+'! ☀️'),
+      h('p',null,st.done===0?'Bắt đầu từ Chặng 0 để khám phá kế thừa trong Java nhé.':(st.done===st.total?'Tuyệt vời! Bạn đã hoàn thành toàn bộ bài tập của buổi học.':'Tiếp tục Chặng '+nx+' ('+nxSt.tab+') để giữ mạch học nhé!')),
+      h('div',{class:'row'},
+        h('button',{class:'btn',type:'button',onclick:function(){go(nx)}},icon('play','fill'),st.done===0?'Bắt đầu học':'Tiếp tục · '+nxSt.tab),
+        h('button',{class:'btn ghost',type:'button',onclick:function(){go(7)}},'Xem tổng kết')
+      )
+    ),
+    h('div',{class:'art','data-emoji':'🧑‍💻'},h('img',{src:'assets/hero.jpg',alt:'',onerror:function(){this.parentNode.classList.add('noimg')}}))
+  );
+  box.append(hero);
+
+  box.append(h('div',{class:'stats'},
+    statCard('c-purple','check','Bài đã hoàn thành',st.done,'/ '+st.total,'+'+st.pct+'% tiến độ khóa học'),
+    statCard('c-pink','target','Điểm hiện tại',st.score,'/ 10',st.first+' bài đúng ngay lần đầu'),
+    statCard('c-yellow','zap','Kinh nghiệm & Huy hiệu',S.xp,'XP',S.badges.length+'/'+BADGES.length+' huy hiệu đã mở'),
+    statCard('c-blue','clock','Thời gian & Điểm danh',Math.max(1,Math.round(S.timeMs/60000)),'phút','Đã điểm danh '+fmtClock(S.lastCheckin||Date.now()))
+  ));
+
+  var bars=h('div',{class:'bars'});
+  for(var i=0;i<=6;i++){
+    (function(si){
+      var p=stageProg(si),pc=p.n?Math.round(p.d/p.n*100):0;
+      bars.append(h('button',{class:'bcol'+(si===nx?' cur':''),type:'button',title:'Mở Chặng '+si+': '+STAGES[si].title,onclick:function(){go(si)}},
+        h('span',{class:'bv'},p.d+'/'+p.n),
+        h('span',{class:'bt'},h('i',{style:'height:'+Math.max(8,pc)+'%;--col:'+STAGE_COL[si]})),
+        h('span',{class:'bl'},STAGE_SHORT[si])
+      ));
+    })(i);
+  }
+  var chartCard=h('section',{class:'card'},
+    h('div',{class:'card-h'},h('h3',null,'Tiến độ theo chặng'),h('button',{class:'tagp',type:'button',onclick:function(){go(nx)}},'Chặng '+nx+' →')),
+    bars
+  );
+
+  var tot=st.total||1,p1=Math.round(st.first/tot*100),p2=Math.round((st.first+st.retry)/tot*100),p3=Math.round((st.first+st.retry+st.rv)/tot*100);
+  var grad=st.done?'conic-gradient(#5cc48a 0% '+p1+'%,#6f9bf2 '+p1+'% '+p2+'%,#f5b94a '+p2+'% '+p3+'%,var(--surface2) '+p3+'% 100%)':'conic-gradient(var(--surface2) 0% 100%)';
+  var donutCard=h('section',{class:'card'},
+    h('div',{class:'card-h'},h('h3',null,'Phân bố kết quả'),h('span',{class:'tagp'},st.done+'/'+st.total+' bài')),
+    h('div',{class:'donut-w'},
+      h('div',{class:'donut',style:'background:'+grad},h('div',{class:'ct'},h('div',null,h('b',null,st.score),h('span',null,'điểm / 10')))),
+      h('div',{class:'lgd'},
+        h('div',null,h('i',{style:'background:#5cc48a'}),h('span',null,'Đúng ngay lần đầu'),h('b',null,st.first+' ('+p1+'%)')),
+        h('div',null,h('i',{style:'background:#6f9bf2'}),h('span',null,'Đúng sau khi thử lại'),h('b',null,st.retry)),
+        h('div',null,h('i',{style:'background:#f5b94a'}),h('span',null,'Đã xem đáp án'),h('b',null,st.rv)),
+        h('div',null,h('i',{style:'background:var(--line)'}),h('span',null,'Chưa làm'),h('b',null,st.todo))
+      )
+    )
+  );
+  box.append(h('div',{class:'dgrid'},chartCard,donutCard));
+
+  var actBox=h('div',{class:'acts'}),recent=S.attempts.slice(-4).reverse();
+  if(!recent.length)actBox.append(h('div',{class:'empty'},'Chưa có lượt làm bài nào. Hãy chọn một chặng để bắt đầu!'));
+  else recent.forEach(function(e){
+    var cls=e.ketQua==='đúng'?'c-green':(e.ketQua==='xem đáp án'?'c-yellow':'c-pink');
+    var icn=e.ketQua==='đúng'?'check':(e.ketQua==='xem đáp án'?'eye':'x');
+    actBox.append(h('button',{class:'act',type:'button',onclick:function(){if(e.chang>=0)go(e.chang)}},
+      h('span',{class:'ti '+cls},icon(icn)),
+      h('span',{class:'mt'},h('b',null,e.tenBai||TITLE_OF[e.baiTap]||e.baiTap),h('span',null,'Kết quả: '+e.ketQua+' · lần thử '+e.lanThu)),
+      h('span',{class:'tm'},ago(e.ts))
+    ));
+  });
+  var actCard=h('section',{class:'card'},
+    h('div',{class:'card-h'},h('h3',null,'Hoạt động gần đây'),h('button',{class:'tagp',type:'button',onclick:function(){go(7)}},'Tất cả')),
+    actBox
+  );
+
+  var nxp=nxP.n?Math.round(nxP.d/nxP.n*100):100;
+  var nextCard=h('section',{class:'card'},
+    h('div',{class:'card-h'},h('h3',null,'Chặng đề xuất tiếp theo'),h('button',{class:'tagp',type:'button',onclick:function(){go(nx)}},'Mở chặng')),
+    h('div',{class:'next'},
+      h('div',{class:'big'},icon(STAGE_IC[nx]||'layers')),
+      h('small',null,'Chặng '+nx+' · khoảng '+nxSt.min+' phút'),
+      h('h4',null,nxSt.title),
+      h('p',null,nxSt.goal),
+      nxP.n?h('div',{class:'nb'},h('i',{style:'width:'+nxp+'%'})):null,
+      h('button',{class:'play',type:'button','aria-label':'Học chặng '+nx,onclick:function(){go(nx)}},icon('play','fill'))
+    )
+  );
+  box.append(h('div',{class:'dgrid'},actCard,nextCard));
+
+  box.append(h('section',{class:'banner'},
+    h('div',{class:'ti'},icon('sheet')),
+    h('div',{class:'mt'},
+      h('b',null,'Theo dõi tiến độ & Điểm danh trên Google Sheet'),
+      h('span',{id:'bnTx'},syncLine())
+    ),
+    h('div',{class:'row'},
+      sheetUrl()?h('button',{class:'btn sm',type:'button',onclick:function(){queueProgress(0);setTimeout(flush,50);toast('Đang gửi lên Google Sheet…')}},icon('send'),'Đồng bộ ngay'):h('button',{class:'btn sm',type:'button',onclick:function(){openMenu(true)}},'Kết nối Sheet'),
+      h('button',{class:'btn ghost sm',type:'button',onclick:downloadCSV},icon('download'),'Tải CSV')
+    )
+  ));
+}
+
+/* ================= hiển thị chặng + điều hướng ================= */
+function renderStage(i){
+  var box=$('#stage');box.innerHTML='';chipReg=[];
+  if(i==null||i<0||i>=STAGES.length){
+    cur=-1;
+    $('#pgT').textContent='Tổng quan';$('#pgS').textContent=CONFIG.COURSE+' · '+CONFIG.SESSION;
+    renderDash(box);chrome();window.scrollTo(0,0);return;
+  }
+  cur=i;S.last=cur;save();queueProgress(3000);
+  var st=STAGES[cur],p=stageProg(cur);
+  $('#pgT').textContent=st.tab;$('#pgS').textContent='Chặng '+cur+' · khoảng '+st.min+' phút';
+  var rg=p.n?h('div',{class:'ring',id:'ring',style:ringBg(p)},h('span',{html:Math.round(p.d/p.n*100)+'%<small>'+p.d+'/'+p.n+' bài</small>'})):h('div',{class:'ring ico'},icon(STAGE_IC[cur]||'layers'));
+  box.append(h('div',{class:'sbanner'},
+    h('div',{class:'sbt'},h('div',{class:'eyebrow'},'Chặng '+cur+' · khoảng '+st.min+' phút'),h('h2',{class:'stg-h'},st.title),h('p',{class:'goal'},st.goal)),
+    h('div',{class:'bg'},icon(STAGE_IC[cur]||'layers')),
+    rg
+  ));
+  var sec=h('div',{class:'sec'});
+  st.blocks.forEach(function(b){var f=B[b.k];if(f)sec.append(f(b))});
+  box.append(sec);
+  var nav=h('div',{class:'pnav'});
+  nav.append(cur>0?h('button',{class:'btn ghost',type:'button',onclick:function(){go(cur-1)}},'← '+STAGES[cur-1].tab):h('button',{class:'btn ghost',type:'button',onclick:function(){go(-1)}},'← Tổng quan'));
+  nav.append(cur<STAGES.length-1?h('button',{class:'btn',type:'button',onclick:function(){go(cur+1)}},STAGES[cur+1].tab+' →'):h('button',{class:'btn',type:'button',onclick:function(){go(-1)}},'Về Tổng quan'));
+  box.append(nav);
+  chrome();chips();
+  window.scrollTo(0,0);
+}
+function go(i){
+  var tag=(i==null||i<0)?'tong-quan':'chang-'+i;
+  if(location.hash==='#'+tag)renderStage(i);else location.hash=tag;
+}
+function stageFromHash(){
+  if(location.hash==='#tong-quan')return -1;
+  var m=/^#chang-(\d+)$/.exec(location.hash);return m?+m[1]:null;
+}
+function closeNav(){document.body.classList.remove('nav-open');$('#scrim').hidden=true}
+window.addEventListener('hashchange',function(){if(!user)return;var n=stageFromHash();if(n!=null&&n!==cur)renderStage(n)});
+document.addEventListener('keydown',function(e){
+  if(!user||e.altKey||e.ctrlKey||e.metaKey)return;
+  var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
+  if(e.key==='ArrowRight'&&cur<STAGES.length-1)go(cur+1);
+  else if(e.key==='ArrowLeft'&&cur>=0)go(cur-1);
+});
+['pointerdown','keydown','scroll'].forEach(function(ev){window.addEventListener(ev,function(){lastInteract=Date.now()},{passive:true})});
+
+/* ================= đăng nhập, menu, giao diện ================= */
+function startSession(u,fromForm){
+  user=u;S=loadState(u.id);store.set('ktt.user',JSON.stringify(u));
+  if(fromForm||!S.lastCheckin||Date.now()-S.lastCheckin>30*60*1000){
+    S.checkins=(S.checkins||0)+1;S.lastCheckin=Date.now();
+    var ev=baseEv('checkin');ev.lanDiemDanh=S.checkins;ev.thietBi=navigator.platform||'';
+    enqueue(ev);queueProgress(600);
+  }
+  $('#login').hidden=true;$('#app').hidden=false;$('#nav').innerHTML='';
+  var n=stageFromHash();
+  renderStage(n!=null?n:-1);
+  if(n==null)history.replaceState(null,'','#tong-quan');
+  scheduleFlush(800);
+}
+function showLogin(){
+  queueProgress(0);flush();
+  user=null;S=null;$('#app').hidden=true;$('#login').hidden=false;$('#umenu').hidden=true;$('#lg-err').textContent='';
+  $('#stage').innerHTML='';$('#nav').innerHTML='';
+  var info=$('#lg-sync');
+  info.textContent=sheetUrl()?'✓ Đã kết nối Google Sheet — điểm danh sẽ được ghi tự động khi bạn vào học.':'';
+}
+$('#lgf').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=$('#lg-name').value.trim().replace(/\s+/g,' '),id=$('#lg-id').value.trim().replace(/\s+/g,'').toUpperCase(),lop=$('#lg-lop').value.trim().replace(/\s+/g,' ');
+  var err=$('#lg-err');
+  if(name.length<2){err.textContent='Vui lòng nhập họ và tên.';return}
+  if(!/^[A-Z0-9._-]{3,20}$/.test(id)){err.textContent='MSSV gồm 3 đến 20 ký tự chữ hoặc số.';return}
+  startSession({name:name,id:id,lop:lop},true);
+  toast('Điểm danh thành công! Chào '+firstName()+' 👋');
+});
+
+function openMenu(focusUrl){
+  var m=$('#umenu');m.innerHTML='';
+  var note=h('div'),tOut=h('div',{class:'cap'});
+  var inp=h('input',{type:'url',placeholder:'https://script.google.com/macros/s/.../exec',value:sheetUrl()});
+  var saveBtn=h('button',{class:'btn sm',type:'button',onclick:function(){
+    var v=inp.value.trim();
+    if(v&&!validUrl(v)){tOut.textContent='URL phải có dạng https://script.google.com/macros/s/.../exec';return}
+    CONFIG.SHEET_URL=v;store.set('ktt.sheet',v);SY.err=false;syncUI();
+    if(v){queueProgress(0);setTimeout(flush,80);tOut.textContent='Đã lưu URL và bắt đầu đồng bộ.'}
+    else tOut.textContent='Đã xóa URL Google Sheet.';
+  }},'Lưu URL');
+  var testBtn=h('button',{class:'btn ghost sm',type:'button',onclick:function(){
+    var v=inp.value.trim();if(v&&validUrl(v)){CONFIG.SHEET_URL=v;store.set('ktt.sheet',v)}
+    testConn(tOut);
+  }},'Kiểm tra');
+  var syncBtn=h('button',{class:'btn ghost sm',type:'button',onclick:function(){
+    var ev=baseEv('checkin');ev.lanDiemDanh=S.checkins||1;ev.thietBi=navigator.platform||'';
+    enqueue(ev);queueProgress(0);setTimeout(flush,50);tOut.textContent='Đang gửi dữ liệu điểm danh & tiến độ…';
+  }},'Gửi ngay');
+
+  m.append(
+    h('div',{class:'mhd'},
+      h('div',{class:'round uavatar','aria-hidden':'true'},initial()),
+      h('div',null,h('p',null,h('strong',null,user.name)),h('p',{class:'cap'},'MSSV: '+user.id+(user.lop?' · Lớp: '+user.lop:'')))
+    ),
+    h('div',{class:'mbox'},
+      h('h4',null,'Đồng bộ Google Sheet'),
+      h('p',{class:'cap',id:'syncLn'},syncLine()),
+      inp,
+      h('div',{class:'row'},saveBtn,testBtn,syncBtn),
+      tOut
+    ),
+    h('div',{class:'row'},
+      h('button',{class:'btn sm',type:'button',onclick:downloadCSV},icon('download'),'Xuất CSV'),
+      h('button',{class:'btn ghost sm',type:'button',onclick:function(){copyText(sumText(),note)}},icon('copy'),'Sao chép báo cáo'),
+      h('button',{class:'btn ghost sm',type:'button',onclick:showLogin},icon('logout'),'Đổi người')
+    ),
+    note
+  );
+  m.hidden=false;$('#usr').setAttribute('aria-expanded','true');
+  if(focusUrl)setTimeout(function(){try{inp.focus();inp.select()}catch(e){}},30);
+}
+$('#usr').addEventListener('click',function(){
+  var m=$('#umenu');
+  if(!m.hidden){m.hidden=true;$('#usr').setAttribute('aria-expanded','false');return}
+  openMenu(false);
+});
+$('#sync').addEventListener('click',function(){openMenu(!sheetUrl())});
+document.addEventListener('click',function(e){
+  var m=$('#umenu');if(m.hidden)return;
+  if(!m.contains(e.target)&&e.target!==$('#usr')&&!$('#usr').contains(e.target)&&e.target!==$('#sync')&&!$('#sync').contains(e.target)){
+    m.hidden=true;$('#usr').setAttribute('aria-expanded','false');
+  }
+});
+$('#menuBtn').addEventListener('click',function(){
+  var open=document.body.classList.toggle('nav-open');$('#scrim').hidden=!open;
+});
+$('#scrim').addEventListener('click',closeNav);
+
+function paintThemeBtn(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  var b=$('#thm');b.innerHTML=ic(dark?'sun':'moon');
+  b.title=dark?'Chuyển sang giao diện sáng':'Chuyển sang giao diện tối';
+}
+$('#thm').addEventListener('click',function(){
+  var r=document.documentElement,next=r.getAttribute('data-theme')==='dark'?'light':'dark';
+  r.setAttribute('data-theme',next);store.set('ktt.theme',next);paintThemeBtn();
+});
+window.addEventListener('online',function(){SY.err=false;flush()});
+window.addEventListener('pagehide',function(){if(S&&user){save();flush()}});
+
+setInterval(function(){
+  if(user&&S&&!document.hidden&&Date.now()-lastInteract<120000){
+    S.timeMs=(S.timeMs||0)+1000;
+    if(Math.floor(S.timeMs/1000)%15===0)save();
+    if(Math.floor(S.timeMs/1000)%120===0)queueProgress();
+  }
+  if(S)$('#clk').textContent=fmtTime(S.timeMs||0);
+},1000);
+
+(function boot(){
+  document.querySelectorAll('[data-ic]').forEach(function(el){el.prepend(icon(el.getAttribute('data-ic')))});
+  paintThemeBtn();
+  try{
+    var q=new URLSearchParams(location.search),s=q.get('sheet');
+    if(s&&validUrl(s)){store.set('ktt.sheet',s.trim());history.replaceState(null,'',location.pathname+location.hash)}
+  }catch(e){}
+  $('#lgInfo').textContent=STAGES.length+' chặng · '+ALL_IDS.length+' bài tập tương tác · huy hiệu';
+  var raw=store.get('ktt.user'),u=null;
+  try{u=raw?JSON.parse(raw):null}catch(e){u=null}
+  if(u&&u.name&&u.id)startSession(u,false);
+  else{showLogin();setTimeout(function(){try{$('#lg-name').focus()}catch(e){}},50)}
+})();
+})();
+</script>
+</body>
+</html>
